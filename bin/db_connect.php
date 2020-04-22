@@ -2,9 +2,8 @@
 
 require ("config.php");
 
-$conn = mysqli_connect($dbhost, $dbuser, $dbpass);
+$conn = mysqli_connect($dbhost, $dbuser, $dbpass, "purchases");
 
-if(!$conn)
-{
+if (!$conn) {
     die ("Database connection failure<br>");
 }
