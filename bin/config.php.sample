@@ -10,6 +10,8 @@ $maintenance = TRUE;
 
 /* Warning, this enables the dangerous database operations */
 $installer_mode = TRUE;
+/* This pretty much just deletes the database and starts new. */
+$lets_start_right_from_the_beginning = TRUE;
 
 $dbhost = "localhost:3306";
 $dbuser = "root";
