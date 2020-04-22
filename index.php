@@ -7,9 +7,7 @@ if(isset($_SERVER['PHP_AUTH_USER'])) {
     } elseif(preg_match('/^[-_\@.a-zA-Z0-9]+$/', $_SERVER['PHP_AUTH_USER'])) {
         header('location: staff');
     }
-}
-
-if($_SERVER['REQUEST_METHOD'] == "POST" and isset($_POST['authenticate'])) {
+} else if($_SERVER['REQUEST_METHOD'] == "POST" and isset($_POST['authenticate'])) {
     header('WWW-Authenticate: Basic realm="CSE2K"');
     header('HTTP/1.0 401 Unauthorized');
 }
