@@ -37,6 +37,8 @@ case 'dev':
     /* Well, no rule, just depends what we said in config.php */
     if (!in_array($_SERVER['PHP_AUTH_USER'], $admin_users)) {
         header("location: $site_url/denied.php");
+    } else if ($installer_mode != TRUE) {
+        die ("You need to turn on installer mode in config.php before you go any further...");
     }
     break;
 default:
@@ -45,4 +47,7 @@ default:
     header("location: $site_url/denied.php");
     break;    
 }
+
+/* These are not the droids you have been looking for */
+
 ?>
