@@ -11,24 +11,18 @@ if ($lets_start_right_from_the_beginning != TRUE)
 
 $sql = "DROP DATABASE $dbname";
 
-if(mysqli_query($conn, $sql))
-{
+if(mysqli_query($conn, $sql)) {
 	echo "$dbname database deleted successfully";
-}
-else
-{
+} else {
 	echo "Error deleting $dbname database: " . mysqli_error($conn);
 }
 
 echo "<br /><br />";
 
 echo $sql;
-if(mysqli_query($conn, $sql))
-{
+if(mysqli_query($conn, $sql)) {
 	echo "$dbname database created successfully";
-}
-else
-{
+} else {
 	echo "Error creating $dbname database: " . mysqli_error($conn);
 }
 
