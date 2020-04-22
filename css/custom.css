@@ -1,5 +1,11 @@
 body {
 	background: url(../img/geometry.png) repeat;
+	font-family: "Neutraface";
+}
+
+@font-face {
+	font-family: "Neutraface";
+	src: url("NeutraText-Book.otf") format("opentype");
 }
 
 h1, h2, h3, h4, h5, h6,

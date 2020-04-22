@@ -1,0 +1,28 @@
+<?php
+$brand_name = "Droitwich Spa High School";
+$site_name = "The Rewards Shop";
+
+$site_url = "https://intranet.droitwichspahigh.worcs.sch.uk/shop";
+
+$version = "Version 0.1 - April 2020";
+
+$maintenance = TRUE;
+
+/* Warning, this enables the dangerous database operations */
+$installer_mode = TRUE;
+
+$dbhost = "localhost:3306";
+$dbuser = "root";
+$dbpass = "";
+$dbname = "arborshop";
+
+$admin_users = array('reescm');
+
+if(empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == "off") {
+	$redirect = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+	header('HTTP/1.1 301 Moved Permanently');
+	header('location: ' . $redirect);
+	exit();
+}
+
+?>
