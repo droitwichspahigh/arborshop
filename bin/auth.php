@@ -12,6 +12,7 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
 
 if ($maintenance == TRUE) {
     if (!in_array($_SERVER['PHP_AUTH_USER'], $admin_users)) {
+        die ("Maintenance mode");
         header("location: $site_url/denied.php");
     }
 }
@@ -19,6 +20,15 @@ if ($maintenance == TRUE) {
 /* So, let's check this user should actually be here! */
 
 $site_section = basename(dirname($_SERVER['REQUEST_URI']));
+
+/* 
+ * So if you're on index.php, dirname strips off 
+ * the current directory as there is no filename.
+ * 
+ * I find this behaviour abhorrent personally.
+ */
+if ($site_section == 'shop')
+    $site_section = basename($_SERVER['REQUEST_URI']);
 
 switch($site_section) {
 case 'students':
