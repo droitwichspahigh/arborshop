@@ -59,5 +59,3 @@ default:
 }
 
 /* These are not the droids you have been looking for */
-
-?>

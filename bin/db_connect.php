@@ -8,5 +8,3 @@ if(!$conn)
 {
     die ("Database connection failure<br>");
 }
-
-?>

@@ -19,7 +19,8 @@ function dosql($sqlcmd) {
 
 dosql("DROP DATABASE $dbname;");
 dosql("CREATE DATABASE $dbname;");
-
+dosql("USE $dbname;");
+dosql("CREATE TABLE purchases ");
 
 ?>
 </html>
