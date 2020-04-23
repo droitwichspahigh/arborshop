@@ -14,16 +14,21 @@ if (!$conn) {
 
 echo "Connected successfully<br /><br />";
 
-function dosql($sqlcmd) {
+function dosql($sqlcmd, $critical = TRUE) {
     global $conn;
+    
     if (mysqli_query($conn, $sqlcmd)) {
         echo "$sqlcmd performed successfully<br /><br />";
     } else {
-        die ("Error in $sqlcmd : " . mysqli_error($conn));
+        if ($critical == TRUE) {
+            die ("Error:   $sqlcmd failed: " . mysqli_error($conn));
+        } else {
+            echo "Warning: $sqlcmd failed: " . mysqli_error($conn);
+        }
     }
 }
 
-mysqli_query($conn, "DROP DATABASE $dbname;"); /* Don't mind if this fails */
+dosql("DROP DATABASE $dbname;", FALSE); /* Don't mind if this fails */
 dosql("CREATE DATABASE $dbname;");
 dosql("USE $dbname;");
 $sql = <<< EOT
