@@ -5,7 +5,7 @@ require ("../bin/auth.php");
 
 $first_connection = TRUE;
 
-require ("../bin/db_connect.php");
+require ("../bin/database.php");
 
 if ($lets_start_right_from_the_beginning != TRUE)
     die ("You don't really want to do this.  Check config.php");

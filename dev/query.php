@@ -1,15 +1,10 @@
 <html>
 <?php
 
-die ("Not audited yet");
+require ("../bin/auth.php");
+require ("../bin/database.php");
 
-$conn = mysqli_connect($dbhost, $dbuser, $dbpass, $dbname);
-
-if(!$conn)
-{
-	echo "Connected failure<br>";
-}
-echo "Connected successfully<br><br>";
+die ("This doesn't do anything useful yet<br /><br />");
 
 echo "List of years<br><br>";
 
