@@ -38,6 +38,7 @@ $sql = <<< EOT
         datetime DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
         price SMALLINT UNSIGNED NOT NULL,
         item_id INT UNSIGNED NOT NULL,
+        collected DATETIME DEFAULT NULL,
         CONSTRAINT purchases_pk PRIMARY KEY (purchase_id)
     );
 EOT;
