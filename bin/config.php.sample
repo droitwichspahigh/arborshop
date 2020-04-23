@@ -7,6 +7,7 @@ $site_url = "https://intranet.droitwichspahigh.worcs.sch.uk/shop";
 $version = "Version 0.1 - April 2020";
 
 $maintenance = TRUE;
+$debug = TRUE;
 
 /* Warning, this enables the dangerous database operations */
 $installer_mode = TRUE;

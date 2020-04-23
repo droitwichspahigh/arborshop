@@ -3,31 +3,13 @@
 
 require ("../bin/auth.php");
 
+$first_connection = TRUE;
+
+require ("../bin/db_connect.php");
+
 if ($lets_start_right_from_the_beginning != TRUE)
     die ("You don't really want to do this.  Check config.php");
     
-$conn = mysqli_connect($dbhost, $dbuser, $dbpass);
-
-if (!$conn) {
-    die ("Database connection failure<br>");
-}
-
-echo "Connected successfully<br /><br />";
-
-function dosql($sqlcmd, $critical = TRUE) {
-    global $conn;
-    
-    if (mysqli_query($conn, $sqlcmd)) {
-        echo "$sqlcmd performed successfully<br /><br />";
-    } else {
-        if ($critical == TRUE) {
-            die ("Error:   $sqlcmd failed: " . mysqli_error($conn));
-        } else {
-            echo "Warning: $sqlcmd failed: " . mysqli_error($conn);
-        }
-    }
-}
-
 dosql("DROP DATABASE $dbname;", FALSE); /* Don't mind if this fails */
 dosql("CREATE DATABASE $dbname;");
 dosql("USE $dbname;");
