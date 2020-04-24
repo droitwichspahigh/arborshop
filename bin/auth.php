@@ -12,7 +12,6 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
 
 if ($maintenance == TRUE) {
     if (!in_array($_SERVER['PHP_AUTH_USER'], $admin_users)) {
-        die ("Maintenance mode");
         header("location: $site_url/denied.php");
     }
 }
