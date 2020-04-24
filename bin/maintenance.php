@@ -1,15 +1,26 @@
 <?php
 /* Here you can change parts to temporarily allow certain actions */ 
 
-/* Not a good idea to disable this while maintenance mode active,
- * otherwise people will be allowed to login and you might forget... */
+/**
+ * Lock everyone out of the website.
+ * 
+ * Not a good idea to disable this while maintenance mode active,
+ * otherwise people will be allowed to login and you might forget...
+ */
 $maintenance = TRUE;
 
-/* Might as well leave this enabled */
+/**
+ * Set to TRUE to echo warnings and notices from SQL.
+ */
 $debug = TRUE;
 
-/* Warning, this enables the dangerous database operations */
+/**
+ * Everything inside the /dev hierarchy depends on this being TRUE
+ */
 $installer_mode = TRUE;
 
-/* This is only for if you want to delete everything */
+/** 
+ * If this is set, it enables /dev/create_db, which entails dropping
+ * the old database.
+ */
 $lets_start_right_from_the_beginning = TRUE;
