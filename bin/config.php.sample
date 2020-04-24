@@ -6,13 +6,11 @@ $site_url = "https://intranet.droitwichspahigh.worcs.sch.uk/shop";
 
 $version = "Version 0.1 - April 2020";
 
-$maintenance = TRUE;
-$debug = TRUE;
-
-/* Warning, this enables the dangerous database operations */
-$installer_mode = TRUE;
-/* This pretty much just deletes the database and starts new. */
-$lets_start_right_from_the_beginning = TRUE;
+/* 
+ * Uncomment this to disable the site and perform maintenance.
+ * The file contains granular permissions for dangerous activities.
+ */
+// require 'maintenance.php';
 
 $dbhost = "localhost:3306";
 $dbuser = "root";
