@@ -39,15 +39,23 @@ if ($site_section == 'shop')
 
 switch($site_section) {
 case 'students':
+    /* Only let in students and shopkeepers */
     if (!preg_match("/^$student_user_regex/", $auth_user)) {
-        if (!in_array($auth_user, $admin_users)) {
+        if (!in_array($auth_user, $shopkeepers)) {
             header("location: $site_url/denied.php");
         }
     }
     break;
 case 'staff':
-    if (!preg_match("/$staff_user_regex/", $auth_user)) {
+    /* Let's explicitly keep kids out of staff, as staff regex may match kids! */
+    if (preg_match("/$student_user_regex/", $auth_user) || 
+             !preg_match("/$staff_user_regex/", $auth_user)) {
         header("location: $site_url/denied.php");
+    }
+    /* We don't want staff to be able to do stuff really, as kids can nag tutors
+     * etc, and there's really no need to create a workload issue */
+    if (!in_array($auth_user, $shopkeepers)) {
+        header("location: $site_url/staff/notshopkeeper.php");
     }
     break;
 case 'dev':
