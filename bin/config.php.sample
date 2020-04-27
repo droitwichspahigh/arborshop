@@ -24,8 +24,6 @@ $dbuser = "root";
 $dbpass = "";
 $dbname = "arborshop";
 
-$admin_users = array('reescm');
-
 /**
  * Regular expression for matching student logins.
  * 
@@ -37,6 +35,30 @@ $admin_users = array('reescm');
  */
 $student_user_regex = '^[0-9]{2}[a-zA-Z]+$';
 $staff_user_regex = '^[a-zA-Z]+$';
+
+/* These guys should be able to do everything.
+ *
+ * Even the really dangerous stuff.  Probably seriously limit these to those who have read the code.
+ */
+$admin_users = array('reescm');
+
+/* These people can modify the shop details, items etc.
+ * All shop managers are shopkeepers too.
+ */
+
+$shopmanagers = array('shopadmin1', 'shopadmin2');
+
+/* These people can sell things and give refunds */
+
+$shopkeepers = array('shopkeeper1', 'shopkeeper2');
+
+/* Remove this line to show you've completed your setup */
+die("You didn't read and complete config.php!");
+
+/* No user serviceable parts below this point */
+
+$shopmanagers = array_merge($shopmanagers, $admin_users);
+$shopkeepers = array_merge($shopkeepers, $shopmanagers);
 
 if(empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == "off") {
 	$redirect = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
