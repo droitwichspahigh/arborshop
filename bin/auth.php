@@ -8,10 +8,12 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
     header("location: $site_url/");
 }
 
+$auth_user = $_SERVER['PHP_AUTH_USER'];
+
 /* Maintenance mode?  Sorry, devs only */
 
 if ($maintenance == TRUE) {
-    if (!in_array($_SERVER['PHP_AUTH_USER'], $admin_users)) {
+    if (!in_array($auth_user, $admin_users)) {
         header("location: $site_url/denied.php");
     }
 }
@@ -31,20 +33,20 @@ if ($site_section == 'shop')
 
 switch($site_section) {
 case 'students':
-    if (!preg_match("/^$student_user_regex/", $_SERVER['PHP_AUTH_USER'])) {
-        if (!in_array($_SERVER['PHP_AUTH_USER'], $admin_users)) {
+    if (!preg_match("/^$student_user_regex/", $auth_user)) {
+        if (!in_array($auth_user, $admin_users)) {
             header("location: $site_url/denied.php");
         }
     }
     break;
 case 'staff':
-    if (!preg_match("/$staff_user_regex/", $_SERVER['PHP_AUTH_USER'])) {
+    if (!preg_match("/$staff_user_regex/", $auth_user)) {
         header("location: $site_url/denied.php");
     }
     break;
 case 'dev':
     /* Well, no rule, just depends what we said in config.php */
-    if (!in_array($_SERVER['PHP_AUTH_USER'], $admin_users)) {
+    if (!in_array($auth_user, $admin_users)) {
         header("location: $site_url/denied.php");
     } else if ($installer_mode != TRUE) {
         die ("You need to turn on installer mode in config.php before you go any further...");
