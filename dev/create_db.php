@@ -7,6 +7,8 @@ $first_connection = TRUE;
 
 require "../bin/database.php";
 
+dosql("USE $dbname;", FALSE);
+
 if ($lets_start_right_from_the_beginning == TRUE) {
     dosql("DROP DATABASE $dbname;", FALSE); /* Don't mind if this fails */
     dosql("CREATE DATABASE $dbname;");
