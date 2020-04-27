@@ -31,16 +31,14 @@ if ($site_section == 'shop')
 
 switch($site_section) {
 case 'students':
-    /* Student usernames begin with two or more numbers and then alphanums */
-    if (!preg_match('/^[0-9]{2}[-_\@.a-zA-Z]+$/', $_SERVER['PHP_AUTH_USER'])) {
+    if (!preg_match("/^$student_user_regex/", $_SERVER['PHP_AUTH_USER'])) {
         if (!in_array($_SERVER['PHP_AUTH_USER'], $admin_users)) {
             header("location: $site_url/denied.php");
         }
     }
     break;
 case 'staff':
-    /* Staff usernames do not contain numbers */
-    if (!preg_match('/^[-_\@.a-zA-Z]+$/', $_SERVER['PHP_AUTH_USER'])) {
+    if (!preg_match("/$staff_user_regex/", $_SERVER['PHP_AUTH_USER'])) {
         header("location: $site_url/denied.php");
     }
     break;

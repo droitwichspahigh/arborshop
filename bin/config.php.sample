@@ -26,6 +26,18 @@ $dbname = "arborshop";
 
 $admin_users = array('reescm');
 
+/**
+ * Regular expression for matching student logins.
+ * 
+ * At DSHS, all student logins begin with two digits and then
+ * alphabetical characters until the '@'.
+ * 
+ * Be absolutely certain that this will catch all students, otherwise
+ * they will have access elsewhere.  Do you have digits in your domain name?
+ */
+$student_user_regex = '^[0-9]{2}[a-zA-Z]+@[-_\.a-zA-Z0-9]+$';
+$staff_user_regex = '^[a-zA-Z]+@[-_\.a-zA-Z0-9]+$';
+
 if(empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == "off") {
 	$redirect = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 	header('HTTP/1.1 301 Moved Permanently');

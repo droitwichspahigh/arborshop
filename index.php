@@ -2,10 +2,12 @@
 include('bin/config.php');
 
 if(isset($_SERVER['PHP_AUTH_USER'])) {
-    if(preg_match('/^[0-9]{2}[-_\@.a-zA-Z0-9]+$/', $_SERVER['PHP_AUTH_USER'])) {
+    if(preg_match("/$student_user_regex/", $_SERVER['PHP_AUTH_USER'])) {
         header('location: students');
-    } elseif(preg_match('/^[-_\@.a-zA-Z0-9]+$/', $_SERVER['PHP_AUTH_USER'])) {
+    } elseif(preg_match("/$staff_user_regex/", $_SERVER['PHP_AUTH_USER'])) {
         header('location: staff');
+    } else {
+        header('location: denied.php');
     }
 } else if($_SERVER['REQUEST_METHOD'] == "POST" and isset($_POST['authenticate'])) {
     header('WWW-Authenticate: Basic realm="CSE2K"');
