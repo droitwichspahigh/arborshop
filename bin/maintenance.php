@@ -19,11 +19,17 @@ $debug = TRUE;
  */
 $installer_mode = TRUE;
 
-/** 
- * If this is set, it enables /dev/create_db, which entails dropping
- * the old database.
+/**
+ * Enable this to drop all the student records from the previous year.
+ * 
+ * A September job!
  */
-$lets_start_right_from_the_beginning = TRUE;
+$new_year = TRUE;
+
+/**
+ * This means the ENTIRE database is going to be dropped and remade
+ */
+$lets_start_right_from_the_beginning = FALSE;
 
 /** Set up some PHP error reporting too */
 
