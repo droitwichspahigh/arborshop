@@ -16,12 +16,13 @@ if ($maintenance == TRUE) {
     if (!in_array($auth_user, $admin_users)) {
         header("location: $site_url/denied.php");
     }
+} else {
+    /* Don't let the site go live with adminer around! */
+    if (file_exists("../contrib/adminer"))
+        die ("You MUST get rid of adminer first!");
 }
 
-/* Don't let the site go live with adminer around! */
 
-if (file_exists("../contrib/adminer"))
-    die ("You MUST get rid of adminer first!");
 
 /* So, let's check this user should actually be here! */
 
