@@ -8,7 +8,7 @@ $sql = <<<EOT
         price SMALLINT NOT NULL,
         allowed_yeargroups SET('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13'),
         enabled BOOLEAN NOT NULL DEFAULT '1',
-        item_pk PRIMARY KEY (item_id)
+        CONSTRAINT item_pk PRIMARY KEY (item_id)
     );
 EOT;
 dosql($sql);
