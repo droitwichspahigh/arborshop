@@ -5,8 +5,6 @@
  * The administrator is expected to know the correct form of a student's username
  */
 
-require '../../bin/auth.php';
-
 /* Am I a student? */
 if (preg_match("/^$student_user_regex/", $_SERVER['PHP_AUTH_USER'])) {
     $student = $_SERVER['PHP_AUTH_USER'];
