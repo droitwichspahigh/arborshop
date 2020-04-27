@@ -1,3 +1,6 @@
 [submodule "contrib/sis-sdk-php"]
 	path = contrib/sis-sdk-php
 	url = https://github.com/arbor-education/sis-sdk-php.git
+[submodule "contrib/adminer"]
+	path = contrib/adminer
+	url = https://github.com/arbor-education/adminer
