@@ -24,3 +24,9 @@ $installer_mode = TRUE;
  * the old database.
  */
 $lets_start_right_from_the_beginning = TRUE;
+
+/** Set up some PHP error reporting too */
+
+ini_set('display_startup_errors', 1);
+ini_set('display_errors', 1);
+error_reporting(-1);
