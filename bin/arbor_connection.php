@@ -1,5 +1,7 @@
 <?php
 
+require "../contrib/sis-sdk-php/vendor/autoload.php";
+
 require "config.php";
 
 /**

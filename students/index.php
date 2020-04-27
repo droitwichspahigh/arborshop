@@ -1,5 +1,6 @@
 <?php
-require ('../bin/auth.php');
+require '../bin/auth.php';
+require '../bin/arbor_connection.php';
 ?>
 <html lang="en">
 <head>

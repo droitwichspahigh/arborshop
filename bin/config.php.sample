@@ -4,6 +4,13 @@ $site_name = "The Rewards Shop";
 
 $site_url = "https://intranet.droitwichspahigh.worcs.sch.uk/shop";
 
+$arborsite = "https://api-sandbox2.uk.arbor.sc/";
+$arboruser = "";
+$arborpassword = '';
+
+$support_email = "reescm@droitwichspahigh.worcs.sch.uk";
+$powered_by = "R";
+
 $version = "Version 0.1 - April 2020";
 
 /* 
