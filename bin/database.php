@@ -22,6 +22,12 @@ function debug($msg) {
     }
 }
 
+/**
+ * Performs an SQL operation.
+ * 
+ * @param string $sqlcmd SQL operation to perform
+ * @param boolean $critical If set to FALSE, only warn on failure
+ */
 function dosql($sqlcmd, $critical = TRUE) {
     global $conn;
     
