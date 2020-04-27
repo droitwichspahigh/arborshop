@@ -30,13 +30,13 @@ $admin_users = array('reescm');
  * Regular expression for matching student logins.
  * 
  * At DSHS, all student logins begin with two digits and then
- * alphabetical characters until the '@'.
+ * alphabetical characters.
  * 
  * Be absolutely certain that this will catch all students, otherwise
- * they will have access elsewhere.  Do you have digits in your domain name?
+ * they will have access elsewhere.
  */
-$student_user_regex = '^[0-9]{2}[a-zA-Z]+@[-_\.a-zA-Z0-9]+$';
-$staff_user_regex = '^[a-zA-Z]+@[-_\.a-zA-Z0-9]+$';
+$student_user_regex = '^[0-9]{2}[a-zA-Z]+$';
+$staff_user_regex = '^[a-zA-Z]+$';
 
 if(empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == "off") {
 	$redirect = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
