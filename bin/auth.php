@@ -18,6 +18,11 @@ if ($maintenance == TRUE) {
     }
 }
 
+/* Don't let the site go live with adminer around! */
+
+if (file_exists("../contrib/adminer"))
+    die ("You MUST get rid of adminer first!");
+
 /* So, let's check this user should actually be here! */
 
 $site_section = basename(dirname($_SERVER['REQUEST_URI']));
