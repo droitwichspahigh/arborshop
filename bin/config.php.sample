@@ -42,6 +42,8 @@ $staff_user_regex = '^[a-zA-Z]+$';
  */
 $admin_users = array('reescm');
 
+/* At some point we'll grab these permissions from Arbor */
+
 /* These people can modify the shop details, items etc.
  * All shop managers are shopkeepers too.
  */
