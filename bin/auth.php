@@ -41,11 +41,6 @@ case 'staff':
              !preg_match("/$staff_user_regex/", $auth_user)) {
         header("location: $site_url/denied.php");
     }
-    /* We don't want staff to be able to do stuff really, as kids can nag tutors
-     * etc, and there's really no need to create a workload issue */
-    if (!in_array($auth_user, $shopkeepers)) {
-        header("location: $site_url/staff/notshopkeeper.php");
-    }
     break;
 case 'dev':
     /* Well, no rule, just depends what we said in config.php */
