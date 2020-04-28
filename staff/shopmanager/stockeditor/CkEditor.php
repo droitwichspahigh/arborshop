@@ -10,6 +10,8 @@
  * Download the latest version from
  * http://www.mysqlajaxtableeditor.com
  */
+require('../../../bin/auth.php');
+
 require_once('DBC.php');
 require_once('Common.php');
 require_once('php/lang/LangVars-en.php');
@@ -83,7 +85,8 @@ class CkEditor extends Common
 		);
 		$tableColumns['name'] = array(
 			'display_text' => 'Item Name', 
-			'perms' => 'EVCTAXQSHO'
+		    'req' => true, 
+		    'perms' => 'EVCTAXQSHO'
 		);
 		$tableColumns['description'] = array(
 		    'display_text' => 'Description',
@@ -97,8 +100,19 @@ class CkEditor extends Common
 		);
 		$tableColumns['price'] = array(
 			'display_text' => 'Price', 
-			'perms' => 'EVCTAXQSHO'
-		); 
+			'perms' => 'EVCTAXQSHO',
+			'req' => true		    
+		);
+		$tableColumns['enabled'] = array(
+		    'display_text' => 'Enabled for purchase',
+		    'perms' => 'EVCTAXQSHO',
+            'checkbox' => array(
+                'checked_value' => '1',
+                'un_checked_value' => '0'
+            ),
+		    'default' => '1',
+			'req' => true
+		);
 		$tableColumns['allowed_yeargroups'] = array(
 			'display_text' => 'Allowed year groups', 
 			'req' => true, 

@@ -57,6 +57,7 @@ case 'shopkeeper':
     }
     break;
 case 'shopmanager':
+case 'stockeditor':
     /* Guess who is allowed in here? */
     if (!in_array($auth_user, $shopmanagers)) {
         header("location: $site_url/denied.php");
