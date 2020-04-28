@@ -22,20 +22,9 @@ if ($maintenance == TRUE) {
         die ("You MUST get rid of adminer first!");
 }
 
-
-
 /* So, let's check this user should actually be here! */
 
-$site_section = basename(dirname($_SERVER['REQUEST_URI']));
-
-/* 
- * So if you're on index.php, dirname strips off 
- * the current directory as there is no filename.
- * 
- * I find this behaviour abhorrent personally.
- */
-if ($site_section == 'shop')
-    $site_section = basename($_SERVER['REQUEST_URI']);
+$site_section = basename(dirname($_SERVER['PHP_SELF']));
 
 switch($site_section) {
 case 'students':
@@ -64,6 +53,18 @@ case 'dev':
         header("location: $site_url/denied.php");
     } else if ($installer_mode != TRUE) {
         die ("You need to turn on installer mode in config.php before you go any further...");
+    }
+    break;
+case 'shopkeeper':
+    /* Shopkeepers are allowed in here */
+    if (!in_array($auth_user, $shopkeepers)) {
+        header("location: $site_url/denied.php");
+    }
+    break;
+case 'shopmanager':
+    /* Guess who is allowed in here? */
+    if (!in_array($auth_user, $shopmanagers)) {
+        header("location: $site_url/denied.php");
     }
     break;
 default:
