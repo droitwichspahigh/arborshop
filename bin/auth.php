@@ -18,8 +18,8 @@ if ($maintenance == TRUE) {
     }
 } else {
     /* Don't let the site go live with adminer around! */
-    if (file_exists("../contrib/adminer") || file_exists("contrib/phpMyEdit-5.7.1"))
-        die ("You MUST get rid of adminer and phpmyedit bare contrib bits first!");
+    if (file_exists("../contrib/adminer") || file_exists("contrib/mate-free-4.2"))
+        die ("You MUST get rid of adminer and mate-free contrib bits first!");
 }
 
 /* So, let's check this user should actually be here! */
