@@ -1,17 +1,20 @@
 <?php
 
-if (!$dbhost) {
-    die ("dbhost not defined.  Check config.php<br /><br />");
-}
-
-if ($first_connection) {
-    $conn = mysqli_connect($dbhost, $dbuser, $dbpass);
-} else {
-    $conn = mysqli_connect($dbhost, $dbuser, $dbpass, $dbname);
-}
-
+/* Guard against multiple connections */
 if (!$conn) {
-    die ("Database connection failure<br />");
+    if (!$dbhost) {
+        die ("dbhost not defined.  Check config.php<br /><br />");
+    }
+    
+    if ($first_connection) {
+        $conn = mysqli_connect($dbhost, $dbuser, $dbpass);
+    } else {
+        $conn = mysqli_connect($dbhost, $dbuser, $dbpass, $dbname);
+    }
+    
+    if (!$conn) {
+        die ("Database connection failure<br />");
+    }
 }
 
 function debug($msg) {
@@ -27,11 +30,12 @@ function debug($msg) {
  * 
  * @param string $sqlcmd SQL operation to perform
  * @param boolean $critical If set to FALSE, only warn on failure
+ * @return mysqli_result
  */
 function dosql($sqlcmd, $critical = TRUE) {
     global $conn;
     
-    if (mysqli_query($conn, $sqlcmd)) {
+    if ($result = mysqli_query($conn, $sqlcmd)) {
         debug("$sqlcmd performed successfully<br /><br />");
     } else {
         if ($critical == TRUE) {
@@ -40,4 +44,5 @@ function dosql($sqlcmd, $critical = TRUE) {
             debug("Warning: $sqlcmd failed: " . mysqli_error($conn));
         }
     }
+    return $result;
 }
