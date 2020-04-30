@@ -36,7 +36,8 @@ class Shop
                     $row['price'],
                     $row['description'],
                     $row['imgpath'],
-                    $row['allowed_yeargroups']);
+                    $row['allowed_yeargroups'],
+                    $row['enabled']);
                 array_push($this->items, $shopItem);
             }
         }
@@ -48,26 +49,38 @@ class Shop
     
     /**
      * By default print all listitems, but yeargroup can restrict
+     * 
+     * It assumes that if yeargroup is set, this is a pupil's list and will have links
+     * 
      * @param integer $yeargroup
      */    
     public function outputHtmlListItems($yeargroup = NULL) {
         echo "<hr />";
         foreach ($this->items as $i) {
             if ($i->availableForYearGroup($yeargroup)) {
+                $d = $i->getDescription();
+                if ($yeargroup == NULL) {
+                    /* This will be staff */
+                    /* Show which year groups are allowed it */
+                    $d = "<span class=\"text-muted\">(Years " . $i->getAvailability() . ")</span> $d";
+                    if ($i->isEnabled() == FALSE)
+                        $d = "<span class=\"text-muted\">(disabled)</span> $d";
+                } else if ($i->isEnabled() == FALSE) {
+                    /* Don't show disabled items to kids */
+                    continue;
+                }
                 $p = $i->getPrice();
                 $n = $i->getName();
-                $d = $i->getDescription();
                 $img = $i->getImg();
-                $listitem = <<<EOF
+                echo <<<EOF
 <div class="row">
     <div class="col-sm-1 text-center">$p points</div>
     <div class="col-sm-2 text-center"><strong>$n</strong></div>
     <div class="col-sm-7">$d</div>
-    <div class="col-sm-2">$img</div>
+    <div class="col-sm-2 text-center">$img</div>
 </div>
 <hr />
 EOF;
-                echo $listitem;
             }
         }
     }
