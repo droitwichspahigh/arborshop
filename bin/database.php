@@ -1,12 +1,12 @@
 <?php
 
 /* Guard against multiple connections */
-if (!$conn) {
+if (!isset($conn)) {
     if (!$dbhost) {
         die ("dbhost not defined.  Check config.php<br /><br />");
     }
     
-    if ($first_connection) {
+    if (isset($first_connection)) {
         $conn = mysqli_connect($dbhost, $dbuser, $dbpass);
     } else {
         $conn = mysqli_connect($dbhost, $dbuser, $dbpass, $dbname);
