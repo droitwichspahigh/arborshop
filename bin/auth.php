@@ -47,7 +47,7 @@ case 'dev':
     if (!in_array($auth_user, $admin_users)) {
         header("location: $site_url/denied.php");
     } else if ($installer_mode != TRUE) {
-        die ("You need to turn on installer mode in config.php before you go any further...");
+        die ("You need to turn on installer mode in maintenance.php before you go any further...");
     }
     break;
 case 'shopkeeper':
