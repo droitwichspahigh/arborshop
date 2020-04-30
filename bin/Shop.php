@@ -1,5 +1,8 @@
 <?php
+
 namespace bin;
+
+require "ShopItem.php";
 
 /**
  * Gets a list of ShopItems from the database
@@ -23,12 +26,12 @@ class Shop
     {
         $this->items = [];
         
-        $result = dosql("SELECT * FROM products");
+        $result = dosql("SELECT * FROM items");
         
         if ($result->num_rows > 0) {
             while($row = $result->fetch_assoc()) {
                 $shopItem = new ShopItem(
-                    $row['id'],
+                    $row['item_id'],
                     $row['name'],
                     $row['price'],
                     $row['description'],
@@ -50,12 +53,16 @@ class Shop
     public function outputHtmlListItems($yeargroup = NULL) {
         foreach ($this->items as $i) {
             if ($i->availableForYearGroup($yeargroup)) {
+                $n = $i->getName();
+                $p = $i->getPrice();
+                $d = $i->getDescription();
+                $img = $i->getImg();
                 $listitem = <<<EOF
 <div class="row">
-    <div class="col-md-2">$i->getName()</div>
-    <div class="col-md-2">$i->getPrice()</div>
-    <div class="col-md-8">$i->getDescription()</div>
-    <div class="col-md-4">$i->getImg()</div>
+    <div class="col-1">$n</div>
+    <div class="col-1">$p</div>
+    <div class="col-8">$d</div>
+    <div class="col-2">$img</div>
 </div>
 EOF;
                 echo $listitem;
@@ -63,7 +70,7 @@ EOF;
         }
     }
 
-    function __destruct($commit = FALSE)
+    function __destruct()
     {
         /* DO_NADA */
     }
