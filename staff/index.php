@@ -1,13 +1,14 @@
 <?php
 require '../bin/auth.php';
 require "../bin/database.php";
+require "../bin/Shop.php";
 ?>
 <html lang="en">
 
 <?php require '../bin/head.php';?>
 
 <body>
-	<div class="container">
+	<div class="container-sm">
     	<h1>Welcome to the staff area of <?= $site_name ?>!</h1>
     	
     	<!-- First, the items -->
@@ -32,7 +33,7 @@ require "../bin/database.php";
     	
     	
 <?php
-if (in_array($auth_user, $shopmanagers)) {
+if (!in_array($auth_user, $shopkeepers)) {
 ?>
 	<p>There's not really anything for you to do here.</p>
 	
