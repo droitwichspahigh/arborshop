@@ -11,18 +11,25 @@ require "../bin/Shop.php";
 	<div class="container">
     	<h1>Welcome to the staff area of <?= $site_name ?>!</h1>
     	
-    	<!-- First, the items -->
+		<?php
+		if (in_array($auth_user, $shopmanagers)) {
+		    $sm_btn = '<a class="btn btn-warning" href="shopmanager/">Edit stock details</a>';
+		    $sm_msg = "You are also a shop manager, so you can edit the shop details.";
+		}
+		
+		if (in_array($auth_user, $shopkeepers)) { ?>
+			<p>As you are a shopkeeper, you may sell products to students.  <?= $sm_msg; ?></p>
+			
+			<p><a class="btn btn-success" href="sell.php">Process sales</a> <?= $sm_btn; ?></p>
+		<?php } ?>
     	
-<?php 
-	$shop = new bin\Shop($conn);
-	$shop->outputHtmlListItems();
-?>
+        <!-- Give the shop items -->
+        <?php 
+        	$shop = new bin\Shop($conn);
+        	$shop->outputHtmlListItems();
+        ?>
     	
     	<p></p>
-    	
-    	<!-- Then, the shopkeeper links -->
-    	
-    	<!-- Then, the shopmanager links -->
     	
     </div>
     	
