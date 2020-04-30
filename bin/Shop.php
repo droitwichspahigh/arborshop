@@ -51,16 +51,24 @@ class Shop
      * @param integer $yeargroup
      */    
     public function outputHtmlListItems($yeargroup = NULL) {
+        echo <<<EOF
+<div class="row">
+    <div class="col-1">Name</div>
+    <div class="col-1">Price</div>
+    <div class="col-8">Description</div>
+    <div class="col-2">Image</div>
+</div>
+EOF;
         foreach ($this->items as $i) {
             if ($i->availableForYearGroup($yeargroup)) {
-                $n = $i->getName();
                 $p = $i->getPrice();
+                $n = $i->getName();
                 $d = $i->getDescription();
                 $img = $i->getImg();
                 $listitem = <<<EOF
 <div class="row">
-    <div class="col-1">$n</div>
     <div class="col-1">$p</div>
+    <div class="col-1">$n</div>
     <div class="col-8">$d</div>
     <div class="col-2">$img</div>
 </div>
