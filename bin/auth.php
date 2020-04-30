@@ -8,7 +8,7 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
     header("location: $site_url/");
 }
 
-$auth_user = $_SERVER['PHP_AUTH_USER'];
+$auth_user = preg_replace("/@$site_emaildomain/", "", $_SERVER['PHP_AUTH_USER']);
 
 /* Maintenance mode?  Sorry, devs only */
 

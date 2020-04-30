@@ -3,6 +3,7 @@ $brand_name = "Droitwich Spa High School";
 $site_name = "The Rewards Shop";
 
 $site_url = "https://intranet.droitwichspahigh.worcs.sch.uk/shop";
+$site_emaildomain = "droitwichspahigh.worcs.sch.uk";
 
 $arborsite = "https://api-sandbox2.uk.arbor.sc/";
 $arboruser = "";
