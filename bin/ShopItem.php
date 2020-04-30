@@ -36,7 +36,7 @@ class ShopItem
     
     public function getDescription() { return $this->description; }
     
-    public function getImg() { global $site_url; return "<img src=\"$site_url/img/product/$this->img_filename\" class=\"img-circle\" />"; }
+    public function getImg() { global $site_url; return "<img src=\"$site_url/img/product/$this->img_filename\" class=\"img-rounded img-fluid\" />"; }
     
     /**
      * Returns the raw string for availability in the form "0,5,8" etc
