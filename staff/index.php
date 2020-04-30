@@ -8,7 +8,7 @@ require "../bin/Shop.php";
 <?php require '../bin/head.php';?>
 
 <body>
-	<div class="container-sm">
+	<div class="container">
     	<h1>Welcome to the staff area of <?= $site_name ?>!</h1>
     	
     	<!-- First, the items -->
