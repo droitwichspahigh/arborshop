@@ -16,8 +16,6 @@ dosql($sql);
 dosql('INSERT INTO items (name, description, imgpath, price, allowed_yeargroups, enabled) 
         VALUES ("Cheeky Nando\'s voucher", "Enjoy a cheeky Nando\'s, with a &pound;10 voucher", "nandos.png", "500", "8,9,10,11", "1");');
 dosql('INSERT INTO items (name, description, imgpath, price, allowed_yeargroups, enabled)
-        VALUES ("example2", "example2_description", NULL, "10", "11,12,13", "0");');
-dosql('INSERT INTO items (name, description, imgpath, price, allowed_yeargroups, enabled)
         VALUES ("Free two hour driving lesson", "More detail to follow...", "l_plates.png", "100", "12,13", "1");');
 dosql('INSERT INTO items (name, description, imgpath, price, allowed_yeargroups, enabled)
         VALUES ("Free Prom Ticket", "Dance the night away - and it\'s all on us!", "prom_couple.png", "100", "12,13", "1");');
