@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <buildpath>
-	<buildpathentry external="true" kind="lib" path="C:/Users/reescm/eclipse-workspace/git/arborshop/contrib/sis-sdk-php/src/Arbor"/>
+	<buildpathentry kind="lib" path="contrib/sis-sdk-php/src/Arbor"/>
 	<buildpathentry kind="con" path="org.eclipse.php.core.LANGUAGE"/>
-	<buildpathentry kind="src" path=""/>
+	<buildpathentry excluding="contrib/" kind="src" path=""/>
 </buildpath>
