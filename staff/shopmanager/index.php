@@ -1,11 +1,12 @@
 <?php
-require ('../../bin/auth.php');
+require "../../bin/auth.php";
 ?>
 <html lang="en">
 
-<?php require ('../../bin/head.php');?>
+<?php require "../../bin/head.php"; ?>
 
 <body>
+	<?php include "../../bin/breadcrumbs.php"; ?>
 	<div class="card text-center border-secondary mx-auto my-5" style="width: 22rem;">
     	<div class="card-body">
 	  		<img class="mb-4 w-100" src="../../img/logo_v2.jpg" alt="Droitwich Spa High School" />

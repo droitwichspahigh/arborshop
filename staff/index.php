@@ -1,13 +1,14 @@
 <?php
-require '../bin/auth.php';
+require "../bin/auth.php";
 require "../bin/database.php";
 require "../bin/Shop.php";
 ?>
 <html lang="en">
 
-<?php require '../bin/head.php';?>
+<?php require "../bin/head.php"; ?>
 
 <body>
+	<?php include "../bin/breadcrumbs.php"; ?>
 	<div class="container">
     	<h1>Welcome to the staff area of <?= $site_name ?>!</h1>
     	
