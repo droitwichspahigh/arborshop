@@ -1,8 +1,11 @@
 <?php
 
 require "../../bin/auth.php";
+require "../../bin/breadcrumbs.php";
 
-if (!file_exists($_SERVER['DOCUMENT_ROOT'] . "/shop/img/product"))
-    mkdir($_SERVER['DOCUMENT_ROOT'] . "/shop/img/product");
+$productsdir = "../../img/product";
+
+if (!file_exists($productsdir))
+    mkdir($productsdir);
 
 require "../../bin/tinyfilemanager.php";
