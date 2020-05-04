@@ -12,9 +12,9 @@
  * @var string                          $student
  * */
 
-require "../../bin/arbor_connection.php";
+require "../bin/arbor_connection.php";
 require "masquerade.php";
-require "../../bin/database.php";
+require "../bin/database.php";
 
 /** @var int $points 
  * Subtract behaviour points, and add good conduct points */
@@ -63,8 +63,6 @@ for ($pointValue = -4; $pointValue <= 4; $pointValue++) {
 }
 
 /* Now let's grab the spent points from the database, and subtract */
-
-
 
 /* Can't believe I have to do it the above way- this way is way
  * too slow because of the huge pages I have to download for each
