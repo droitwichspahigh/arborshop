@@ -12,7 +12,7 @@ $auth_user = preg_replace("/@$site_emaildomain/", "", $_SERVER['PHP_AUTH_USER'])
 
 /* Maintenance mode?  Sorry, devs only */
 
-if ($maintenance == TRUE) {
+if (isset($maintenance) && $maintenance == TRUE) {
     if (!in_array($auth_user, $admin_users)) {
         header("location: $site_url/denied.php");
     }
@@ -46,7 +46,7 @@ case 'dev':
     /* Well, no rule, just depends what we said in config.php */
     if (!in_array($auth_user, $admin_users)) {
         header("location: $site_url/denied.php");
-    } else if ($installer_mode != TRUE) {
+    } else if (!isset($installermode) || $installer_mode != TRUE) {
         die ("You need to turn on installer mode in maintenance.php before you go any further...");
     }
     break;

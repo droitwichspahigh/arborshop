@@ -9,7 +9,7 @@ require "../bin/database.php";
 
 dosql("USE $dbname;", FALSE);
 
-if ($lets_start_right_from_the_beginning == TRUE) {
+if (isset($lets_start_right_from_the_beginning) && $lets_start_right_from_the_beginning == TRUE) {
     dosql("DROP DATABASE $dbname;", FALSE); /* Don't mind if this fails */
     dosql("CREATE DATABASE $dbname;");
     dosql("USE $dbname;");
@@ -17,7 +17,7 @@ if ($lets_start_right_from_the_beginning == TRUE) {
     $new_year = TRUE;
 }
 
-if ($new_year == TRUE)
+if (isset($new_year) && $new_year == TRUE)
     include "newyear.php";
 
 ?>
