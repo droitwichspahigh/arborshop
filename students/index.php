@@ -1,6 +1,5 @@
 <?php
 require '../bin/auth.php';
-require '../bin/arbor_connection.php';
 require 'bin/arborStudent.php';
 
 ?>
