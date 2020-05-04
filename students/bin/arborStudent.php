@@ -22,7 +22,7 @@ $points = 0;
 
 $emailQuery = new \Arbor\Query\Query(\Arbor\Resource\ResourceType::EMAIL_ADDRESS);
 /* This is where we'll query network login */
-$emailQuery->addPropertyFilter(\Arbor\Model\EmailAddress::EMAIL_ADDRESS, \Arbor\Query\Query::OPERATOR_LIKE, "$student@$site_emaildomain");
+$emailQuery->addPropertyFilter(\Arbor\Model\EmailAddress::EMAIL_ADDRESS, \Arbor\Query\Query::OPERATOR_EQUALS, "$student@$site_emaildomain");
 
 $emailAddress = \Arbor\Model\EmailAddress::query($emailQuery);
 
