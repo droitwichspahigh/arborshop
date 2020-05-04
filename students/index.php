@@ -1,7 +1,7 @@
 <?php
 require '../bin/auth.php';
 require '../bin/arbor_connection.php';
-require 'bin/masquerade.php';
+require 'bin/arborStudent.php';
 
 ?>
 <html lang="en">
@@ -17,9 +17,9 @@ require 'bin/masquerade.php';
 				<div class="card border-primary">
 					<div class="card-body">
 						<img class="mb-4" src="../img/logo_v2.jpg" alt="" height="72">
-						<h1 class="h3 font-weight-normal">Welcome to <?= $site_name; ?>, <?= $student; ?></h1>
+						<h1 class="h3 font-weight-normal">Welcome to <?= $site_name; ?>, <?= $arborStudent->getPerson()->getPreferredFirstName(); ?>.</h1>
 						<div id="user-details">
-							<!-- Here we're going to fill in the user's name, net points and balance once fetched from Arbor -->
+							<?php echo $arborStudent->getPerson()->getPreferredFirstName(); ?>
 						</div>
 					</div>
 				</div>
