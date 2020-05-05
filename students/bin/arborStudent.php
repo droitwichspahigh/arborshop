@@ -52,15 +52,15 @@ if (!isset($emailAddress[0])) {
 
 /* Awesome, so we can get the Arbor ID of the pupil, and all is unlocked */
 
-$arborStudentId = $emailAddress[0]->getEmailAddressOwner()->getProperty('id');
-$arborStudentHref = "rest-v2/students/$arborStudentId";
+$arborStudentId = $emailAddress[0]->getEmailAddressOwner()->getResourceId();
+$arborStudentUrl = $emailAddress[0]->getEmailAddressOwner()->getResourceUrl();
 
-$arborStudent =  $api->retrieve(\Arbor\Resource\ResourceType::STUDENT, $arborStudentId);
+$arborStudent = $api->retrieve(\Arbor\Resource\ResourceType::STUDENT, $arborStudentId);
 
 /* Let's get the year group for this kid.  It really shouldn't be this difficult... */
 
 $regFormMemQuery = new \Arbor\Query\Query(\Arbor\Resource\ResourceType::REGISTRATION_FORM_MEMBERSHIP);
-$regFormMemQuery->addPropertyFilter("student", \Arbor\Query\Query::OPERATOR_EQUALS, $arborStudentHref);
+$regFormMemQuery->addPropertyFilter(\Arbor\Model\User::STUDENT, \Arbor\Query\Query::OPERATOR_EQUALS, $arborStudentUrl);
 $regFormMemQuery->addPropertyFilter(
     \Arbor\Model\RegistrationFormMembership::REGISTRATION_FORM . '.' .
         \Arbor\Model\RegistrationForm::ACADEMIC_YEAR . '.' .
@@ -86,11 +86,10 @@ for ($pointValue = -4; $pointValue <= 4; $pointValue++) {
     /* Now get behavioural incidents */
     $behaviourQuery = new \Arbor\Query\Query(\Arbor\Resource\ResourceType::BEHAVIOURAL_INCIDENT_STUDENT_INVOLVEMENT);
     
-    /* So... I have to hand-hack to look up by ArborId.  Really?  This *is* going to break at some point :( */
     $behaviourQuery->addPropertyFilter(
-        "student",
+        \Arbor\Model\User::STUDENT,
         \Arbor\Query\Query::OPERATOR_EQUALS,
-        $arborStudentHref);
+        $arborStudentUrl);
     
     $behaviourQuery->addPropertyFilter(
         \Arbor\Model\BehaviouralIncidentStudentInvolvement::SEVERITY,
