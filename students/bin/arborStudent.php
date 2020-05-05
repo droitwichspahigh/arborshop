@@ -57,26 +57,24 @@ $arborStudentUrl = $emailAddress[0]->getEmailAddressOwner()->getResourceUrl();
 
 $arborStudent = $api->retrieve(\Arbor\Resource\ResourceType::STUDENT, $arborStudentId);
 
-/* Let's get the year group for this kid.  It really shouldn't be this difficult... */
+/* Now, we find the kid's year group */
+$yearGroupMembershipQuery = new \Arbor\Query\Query(\Arbor\Resource\ResourceType::ACADEMIC_LEVEL_MEMBERSHIP);
+$yearGroupMembershipQuery->addPropertyFilter(\Arbor\Model\User::STUDENT, \Arbor\Query\Query::OPERATOR_EQUALS, $arborStudentUrl);
+$yearGroupMembershipQuery->addPropertyFilter(\Arbor\Model\AcademicYear::START_DATE, \Arbor\Query\Query::OPERATOR_AFTER, $eveOfAY);
+$yearGroupMembershipQuery->addPropertyFilter(\Arbor\Model\AcademicYear::END_DATE, \Arbor\Query\Query::OPERATOR_BEFORE, $postThisAY);
+$yearGroupMembershipList = $api->query($yearGroupMembershipQuery);
 
-$regFormMemQuery = new \Arbor\Query\Query(\Arbor\Resource\ResourceType::REGISTRATION_FORM_MEMBERSHIP);
-$regFormMemQuery->addPropertyFilter(\Arbor\Model\User::STUDENT, \Arbor\Query\Query::OPERATOR_EQUALS, $arborStudentUrl);
-$regFormMemQuery->addPropertyFilter(
-    \Arbor\Model\RegistrationFormMembership::REGISTRATION_FORM . '.' .
-        \Arbor\Model\RegistrationForm::ACADEMIC_YEAR . '.' .
-        \Arbor\Model\AcademicYear::START_DATE,
-    \Arbor\Query\Query::OPERATOR_AFTER,
-    $eveOfAY);
-$regFormMemQuery->addPropertyFilter(
-        \Arbor\Model\RegistrationFormMembership::REGISTRATION_FORM . '.' .
-        \Arbor\Model\RegistrationForm::ACADEMIC_YEAR . '.' .
-        \Arbor\Model\AcademicYear::END_DATE,
-    \Arbor\Query\Query::OPERATOR_BEFORE,
-    $postThisAY);
+if (!isset($yearGroupMembershipList[0])) {
+    die("You appear not to be a member of a year group...");
+} else if (isset($yearGroupMembershipList[1])) {
+    die("You appear to be a member of two year groups!");
+}
 
-$regFormMem = \Arbor\Model\RegistrationFormMembership::query($regFormMemQuery);
+$year_group = str_replace("Year ", "", $yearGroupMembershipList[0]->getProperty('academicLevel')->getProperty('shortName'));
 
-$year_group = preg_replace('/^[^0-9]*([0-9]+).*/', '\1', $regFormMem[0]->getProperty('registrationForm')->getProperty('shortName'));
+if (!is_integer($year_group)) {
+    die("Something strange is going on; your year group is '$year_group' apparently, which I can't convert to a number.");
+}
 
 /* So... we get a list of incidents for x points, for all severity values.
  * 
