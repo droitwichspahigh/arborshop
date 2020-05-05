@@ -14,7 +14,7 @@
 
 /** This file defines:
  * 
- * @var string                  $year_group
+ * @var integer                 $year_group
  * @var \Arbor\Model\Student    $arborStudent
  * @var integer                 $points 
  * 
