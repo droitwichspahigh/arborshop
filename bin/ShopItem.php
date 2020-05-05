@@ -57,7 +57,6 @@ class ShopItem
      */
     public function availableForYearGroup($year)
     {
-        
         if ($year == NULL)
             return TRUE;
         
@@ -68,6 +67,41 @@ class ShopItem
         }
         return FALSE;
     }
+    
+    /**
+     * Outputs a div class="row" for a shop item
+     * 
+     * @param boolean $available            Darkens the row if false
+     * @param string  $description_prefix   Prepends to the description
+     * @param boolean $linked               Makes the row a link to purchase
+     */
+    function printRow($available = true, $description_prefix = NULL, $linked = false) {
+        $d = $this->getDescription();
+        $p = $this->getPrice();
+        $n = $this->getName();
+        $img = $this->getImg();
+        /* Don't show the available years for disabled items */
+        $rowclass = "";
+        $link = "";
+        if (!$available) {
+            $rowclass = "bg-secondary";
+        } else {                
+            $d = "$description_prefix $d";
+            if ($linked)
+                $link = "<a href=\"?purchase=$this->id\" class=\"stretched-link\"></a>";
+        }
+        echo <<<EOF
+<div class="row $rowclass">
+    <div class="col-sm-1 text-center">$p points$link</div>
+    <div class="col-sm-2 text-center"><strong>$n</strong>$link</div>
+    <div class="col-sm-7">$d$link</div>
+    <div class="col-sm-2 text-center">$img$link</div>
+</div>
+<hr />
+EOF;
+        
+    }
+    
 
     /**
      */

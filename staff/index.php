@@ -27,7 +27,7 @@ require "../bin/Shop.php";
         <!-- Give the shop items -->
         <?php 
         	$shop = new bin\Shop($conn);
-        	$shop->outputHtmlListItems();
+        	$shop->staffShop();
         ?>
     	
     	<p></p>

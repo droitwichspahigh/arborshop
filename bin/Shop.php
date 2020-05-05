@@ -13,7 +13,9 @@ require "ShopItem.php";
 class Shop
 {
     /**
-     * @var array(ShopItem)
+     * Array of ShopItems
+     * 
+     * @var array(ShopItem) items
      */
     protected $items;
 
@@ -26,7 +28,7 @@ class Shop
     {
         $this->items = [];
         
-        $result = dosql("SELECT * FROM items");
+        $result = dosql("SELECT * FROM items ORDER BY price ASC");
         
         if ($result->num_rows > 0) {
             while($row = $result->fetch_assoc()) {
@@ -48,43 +50,51 @@ class Shop
     }
     
     /**
-     * By default print all listitems, but yeargroup can restrict
+     * Print a shop without links, for staff to peruse.
      * 
-     * It assumes that if yeargroup is set, this is a pupil's list and will have links
-     * 
-     * @param integer $yeargroup
-     */    
-    public function outputHtmlListItems($yeargroup = NULL) {
+     * First the enabled items are printed, then disabled.
+     */
+    
+    public function staffShop() {
+        $i = null;
+        
         echo "<hr />";
         foreach ($this->items as $i) {
-            if ($i->availableForYearGroup($yeargroup)) {
-                $d = $i->getDescription();
-                if ($yeargroup == NULL) {
-                    /* This will be staff */
-                    /* Show which year groups are allowed it */
-                    $d = "<span class=\"text-muted\">(Years " . $i->getAvailability() . ")</span> $d";
-                    if ($i->isEnabled() == FALSE)
-                        $d = "<span class=\"text-muted\">(disabled)</span> $d";
-                } else if ($i->isEnabled() == FALSE) {
-                    /* Don't show disabled items to kids */
-                    continue;
-                }
-                $p = $i->getPrice();
-                $n = $i->getName();
-                $img = $i->getImg();
-                echo <<<EOF
-<div class="row">
-    <div class="col-sm-1 text-center">$p points</div>
-    <div class="col-sm-2 text-center"><strong>$n</strong></div>
-    <div class="col-sm-7">$d</div>
-    <div class="col-sm-2 text-center">$img</div>
-</div>
-<hr />
-EOF;
+            if ($i->isEnabled())
+                $i->printRow(true, "<span class=\"text-muted\">(Years " . $i->getAvailability() . ")</span> ");
+        }
+        foreach ($this->items as $i) {
+            if (!$i->isEnabled())
+                $i->printRow(false);
+        }
+    }
+    
+    /**
+     * Print a shop with links for available items
+     * 
+     * Available being those where:
+     *  - $yeargroup matches the item's availability
+     *  - item is enabled
+     *  - item is affordable (i.e. costs <= $balance)
+     * 
+     * @param integer $yeargroup
+     * @param integer $balance
+     */
+    public function studentShop($yeargroup, $balance) {
+        echo "<hr />";
+        foreach ($this->items as $i) {
+            if (!$i->availableForYearGroup($yeargroup))
+                continue;
+            if (!$i->isEnabled())
+                continue;
+            if ($i->getPrice() > $balance) {
+                $i->printRow(false);
+            } else {
+                $i->printRow(true, "", true);
             }
         }
     }
-
+    
     function __destruct()
     {
         /* DO_NADA */
