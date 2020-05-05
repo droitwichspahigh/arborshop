@@ -72,7 +72,7 @@ if (!isset($yearGroupMembershipList[0])) {
 
 $year_group = str_replace("Year ", "", $yearGroupMembershipList[0]->getProperty('academicLevel')->getProperty('shortName'));
 
-if (!is_integer($year_group)) {
+if (!is_numeric($year_group)) {
     die("Something strange is going on; your year group is '$year_group' apparently, which I can't convert to a number.");
 }
 
