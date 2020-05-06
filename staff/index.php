@@ -21,6 +21,7 @@ require "../bin/classes.php";
 		<?php
 		if (Config::is_shopmanager($auth_user)) {
 		    $sm_btn = '<a class="btn btn-warning" href="shopmanager/">Edit stock details</a>';
+		    $sm_btn .= ' <a class="btn btn-primary" href="../students/">See the shop as a student</a>';
 		    $sm_msg = "You are also a shop manager, so you can edit the shop details.";
 		}
 		
