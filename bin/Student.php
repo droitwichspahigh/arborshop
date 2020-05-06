@@ -118,7 +118,11 @@ class Student {
         
         $this->arborResourceStudentUrl = $emailAddress[0]->getEmailAddressOwner()->getResourceUrl();
         
-        $this->arborResourceStudent = $this->arborApi->retrieve(\Arbor\Resource\ResourceType::STUDENT, $this->arborResourceStudentId);
+        try {
+            $this->arborResourceStudent = $this->arborApi->retrieve(\Arbor\Resource\ResourceType::STUDENT, $this->arborResourceStudentId);
+        } catch (\Exception $e) {
+            die("You don't appear to be a student- are you a parent or staff?");
+        }
 
         return $this->arborResourceStudent;
     }
@@ -127,7 +131,7 @@ class Student {
         if ($this->firstName != null) {
             return $this->firstName;
         }
-        
+
         $this->firstName = $this->getArborResourceStudent()->getPerson()->getPreferredFirstName();
         
         return $this->getFirstName();
