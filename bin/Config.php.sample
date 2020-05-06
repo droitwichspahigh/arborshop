@@ -2,6 +2,10 @@
 
 namespace Arborshop;
 
+/** Only import this at the beginning of the year, and read it before doing so! */
+include 'maintenance.php';
+
+
 class Config {
 
     static $brand_name = "Droitwich Spa High School";
@@ -66,21 +70,33 @@ class Config {
     /* No user serviceable parts below this point */
     
     static function is_admin($name) {
-        if (in_array($name, Config::users['admin']))
+        if (in_array($name, Config::$users['admin']))
             return true;
         return false;
     }
     
     static function is_shopmanager($name) {
-        if (in_array($name, Config::users['shopmanagers']))
+        if (in_array($name, Config::$users['shopmanagers']))
             return true;
         return is_admin($name);
     }
     
     static function is_shopkeeper($name) {
-        if (in_array($name, Config::users['shopkeepers']))
+        if (in_array($name, Config::$users['shopkeepers']))
             return true;
         return is_shopmanager($name);
+    }
+    
+    static private function check_regex($name, $type) {
+        return preg_match('/^' . Config::$user_regexes[$type] . '/', $name);
+    }
+    
+    static function is_student($name) {
+        return Config::check_regex($name, 'student');
+    }
+    
+    static function is_staff($name) {
+        return Config::check_regex($name, 'staff');
     }
 }
 
