@@ -1,5 +1,5 @@
 <?php
-require('bin/config.php');
+require('bin/classes.php');
 ?>
 <html lang="en">
 
@@ -15,10 +15,10 @@ require('bin/config.php');
 			<p class="text-footer text-muted">				
 				<?php if (!$maintenance) { ?>
 					Access Denied: You are not authorised to use this resource.
-					Please contact <a href="mailto:<?= $support_email ?>?subject=<?= $site_name; ?>: Access Request">
-						<?= $powered_by ?></a> if this is an error.
+					Please contact <a href="mailto:<?= ArborShop\Config::$support_email ?>?subject=<?= ArborShop\Config::$site_name; ?>: Access Request">
+						<?= ArborShop\Config::$powered_by ?></a> if this is an error.
 				<?php } else { ?>
-			        <?= $site_name; ?> is currently under maintenance.  Please try again later.<?php } ?>
+			        <?= ArborShop\Config::$site_name; ?> is currently under maintenance.  Please try again later.<?php } ?>
 			</p>
 			<p class="text-footer text-muted">You're trying to access this site as <?= $_SERVER['PHP_AUTH_USER'];?></p>
 		</div>

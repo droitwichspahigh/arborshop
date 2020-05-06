@@ -61,6 +61,10 @@ $default_timezone = 'Europe/London';
 
 // Root path for file manager
 // use absolute path of directory i.e: '/var/www/folder' or $_SERVER['DOCUMENT_ROOT'].'/folder'
+/**
+ * Set in staff/shopmanager/stock_images.php
+ *  
+ * @var string $productsdir */
 $root_path = $productsdir;
 
 // Root url for links in file manager.Relative to $http_host. Variants: '', 'path/to/subfolder'

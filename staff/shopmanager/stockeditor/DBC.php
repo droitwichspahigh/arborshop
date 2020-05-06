@@ -10,15 +10,11 @@
  * Download the latest version from
  * http://www.mysqlajaxtableeditor.com
  */
+require "../../../bin/classes.php";
+
 class DBC
 {
 	private static $instance = null;
-	private static $dbcInfo = array(
-		'host' => 'localhost:3306'
-		, 'db' => 'arborshop'
-		, 'user' => 'root'
-		, 'password' => 'iamroot'
-	);
 	private static $iniFile = '../../dbc.ini';
 	
 	public static function get()
@@ -27,13 +23,10 @@ class DBC
 		{
 			try
 			{
-				if(file_exists(self::$iniFile)) {
-					self::$dbcInfo = parse_ini_file(self::$iniFile);
-				}
 				self::$instance = new PDO(
-					'mysql:host=' . self::$dbcInfo['host'] . ';dbname=' . self::$dbcInfo['db'], 
-					self::$dbcInfo['user'], 
-					self::$dbcInfo['password'],
+				    'mysql:host=' . \ArborShop\Config::$db['host'] . ';dbname=' . \ArborShop\Config::$db['name'], 
+				    \ArborShop\Config::$db['user'], 
+				    \ArborShop\Config::$db['password'],
 					array(
 						PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8",
 						PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,

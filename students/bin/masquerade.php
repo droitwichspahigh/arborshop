@@ -1,25 +1,28 @@
 <?php
+
 /**
  * Sets student to the student's login, if an administrator tries to appear as a student
  * 
  * The administrator is expected to know the correct form of a student's username
  */
 
+require "../bin/classes.php";
+
 /* Am I a student? */
-if (preg_match("/^$student_user_regex/", $_SERVER['PHP_AUTH_USER'])) {
-    $student = $_SERVER['PHP_AUTH_USER'];
+if (ArborShop\Config::is_student($_SERVER['PHP_AUTH_USER'])) {
+    $masqueraded_username = $_SERVER['PHP_AUTH_USER'];
 } else {
     if (isset($_GET['masquerade_name'])) {
-        $student = $_GET['masquerade_name'];
+        $masqueraded_username = $_GET['masquerade_name'];
     } else {
-        $student = "";
+        $masqueraded_username = "";
     }
 }
 
-/* We may have been allowed onto this page as an administrator, so
+/* We may have been allowed onto this page as a ShopManager, so
  * we'll just collect a student login to pretend to be.
  */
-if (strcmp($student, "") == 0) {    ?>
+if (strcmp($masqueraded_username, "") == 0) {    ?>
     <html lang="en">
     	<head>
     		<title>Masquerade time!</title>

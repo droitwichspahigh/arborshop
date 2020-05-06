@@ -184,5 +184,5 @@ class CkEditor extends Common
 		}
 	}
 }
-$page = new CkEditor();
+new CkEditor();
 ?>

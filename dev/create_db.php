@@ -1,18 +1,23 @@
 <html>
 <?php
 
+require "../bin/classes.php";
 require "../bin/auth.php";
 
-$first_connection = TRUE;
+use ArborShop\Database;
+use ArborShop\Config;
 
-require "../bin/database.php";
+$db = new Database(TRUE);
+$dbname = Config::$db['name'];
 
-dosql("USE $dbname;", FALSE);
+$db->dosql("USE $dbname;", FALSE);
+
+echo "Got here";
 
 if (isset($lets_start_right_from_the_beginning) && $lets_start_right_from_the_beginning == TRUE) {
-    dosql("DROP DATABASE $dbname;", FALSE); /* Don't mind if this fails */
-    dosql("CREATE DATABASE $dbname;");
-    dosql("USE $dbname;");
+    $db->dosql("DROP DATABASE $dbname;", FALSE); /* Don't mind if this fails */
+    $db->dosql("CREATE DATABASE $dbname;");
+    $db->dosql("USE $dbname;");
     include "reset_products.php";
     $new_year = TRUE;
 }

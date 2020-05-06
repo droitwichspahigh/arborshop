@@ -1,5 +1,5 @@
 <?php
-namespace bin;
+namespace ArborShop;
 
 /**
  * Each ShopItem contains the details for one Item.
@@ -39,7 +39,7 @@ class ShopItem
     
     public function getDescription() { return $this->description; }
     
-    public function getImg() { global $site_url; return "<img src=\"$site_url/img/product/$this->img_filename\" class=\"img-rounded img-fluid\" />"; }
+    public function getImg() { return '<img src="' . Config::$site_url . "/img/product/$this->img_filename\" class=\"img-rounded img-fluid\" />"; }
     
     public function isEnabled() { return $this->enabled; }
     

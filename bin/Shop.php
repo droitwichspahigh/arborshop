@@ -1,8 +1,6 @@
 <?php
 
-namespace bin;
-
-require "ShopItem.php";
+namespace ArborShop;
 
 /**
  * Gets a list of ShopItems from the database
@@ -22,13 +20,13 @@ class Shop
     /**
      * Pass a database connection to this to make a Shop.
      *  
-     * @param \mysqli $conn
+     * @param Database $conn
      */
     public function __construct($conn)
     {
         $this->items = [];
         
-        $result = dosql("SELECT * FROM items ORDER BY price ASC");
+        $result = $conn->dosql("SELECT * FROM items ORDER BY price ASC");
         
         if ($result->num_rows > 0) {
             while($row = $result->fetch_assoc()) {

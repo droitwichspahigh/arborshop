@@ -1,20 +1,24 @@
 <?php
 
-namespace Arborshop;
-use ArborShop\Config;
+namespace ArborShop;
 use mysqli;
 use mysqli_result;
 
 /** @var mysqli $conn */
 class Database {
-    private $conn;
+    protected $conn;
     
-    function Database($firstconnection = FALSE) {
+    /**
+     * If firstconnection is true, don't connect to any specific database
+     * 
+     * @param boolean $firstconnection
+     */
+    function __construct($firstconnection = FALSE) {
         $details = Config::$db;
         if ($firstconnection) {
             $this->conn = new mysqli($details['host'], $details['user'], $details['password']);
         } else {
-            $this->conn = new mysqli($details['host'], $details['user'], $details['password'], $details['database']);
+            $this->conn = new mysqli($details['host'], $details['user'], $details['password'], $details['name']);
         }
         
         if ($this->conn->connect_error) {
@@ -25,8 +29,8 @@ class Database {
 
     private function debug($msg) {
         global $debug;
-        
-        if ($debug) {
+
+        if (isset($debug) && $debug) {
             echo $msg;
         }
     }
@@ -40,12 +44,12 @@ class Database {
      */
     function dosql($sqlcmd, $critical = TRUE) {        
         if ($result = $this->conn->query($sqlcmd)) {
-            debug("$sqlcmd performed successfully<br /><br />");
+            $this->debug("$sqlcmd performed successfully<br /><br />");
         } else {
             if ($critical == TRUE) {
                 die ("Error:   $sqlcmd failed: " . $this->conn->error);
             } else {
-                debug("Warning: $sqlcmd failed: " . $this->conn->error);
+                $this->debug("Warning: $sqlcmd failed: " . $this->conn->error);
             }
         }
         return $result;

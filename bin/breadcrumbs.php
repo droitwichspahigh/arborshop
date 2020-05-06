@@ -2,8 +2,10 @@
 <ol class="breadcrumb">
 <?php
 
+require "classes.php";
+
 /* We want to do this relative to the base of the site */
-$site_urlbase = preg_replace("/^[^\/]+\/\/[^\/]+\//", "", $site_url);
+$site_urlbase = preg_replace("/^[^\/]+\/\/[^\/]+\//", "", \ArborShop\Config::$site_url);
 
 /* Trail, then strip the beginning from it */
 $breadcrumb_trail = str_replace("$site_urlbase", "", $_SERVER['PHP_SELF']);

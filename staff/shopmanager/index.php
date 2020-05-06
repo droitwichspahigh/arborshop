@@ -1,5 +1,6 @@
 <?php
 require "../../bin/auth.php";
+require "../../bin/classes.php";
 ?>
 <html lang="en">
 
@@ -11,10 +12,10 @@ require "../../bin/auth.php";
     	<div class="card-body">
 	  		<img class="mb-4 w-100" src="../../img/logo_v2.jpg" alt="Droitwich Spa High School" />
 	  		
-        	<h4 class="card-title"><?= $site_name ?> Stock Management area</h4>
+        	<h4 class="card-title"><?= \ArborShop\Config::$site_name ?> Stock Management area</h4>
         	
         	<p class="card-text">First upload images to the folder.
-        		The default images are provided <a href="<?= $site_url; ?>/img/default_stock_images.zip">here</a> in case you delete any by mistake.</p>
+        		The default images are provided <a href="<?= \ArborShop\Config::$site_url; ?>/img/default_stock_images.zip">here</a> in case you delete any by mistake.</p>
         	
         	<p class="card-text">Please then enter the details of each product.</p>
         	
