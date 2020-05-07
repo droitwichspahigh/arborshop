@@ -10,23 +10,30 @@ namespace ArborShop;
  */
 class Shop
 {
-    /**
-     * Array of ShopItems
-     * 
-     * @var array(ShopItem) items
-     */
-    protected $items;
+    protected $items = null;
+    protected $db = null;
 
     /**
      * Pass a database connection to this to make a Shop.
      *  
      * @param Database $conn
      */
-    public function __construct($conn)
+    public function __construct($db)
     {
+        $this->db = $db;
+    }
+    
+    /**
+     * 
+     * @return \ArborShop\array(ShopItem)
+     */
+    public function getItems() {
+        if ($this->items != null) {
+            return $this->items;
+        }
         $this->items = [];
         
-        $result = $conn->dosql("SELECT * FROM items ORDER BY price ASC");
+        $result = $this->db->dosql("SELECT * FROM items ORDER BY price ASC");
         
         if ($result->num_rows > 0) {
             while($row = $result->fetch_assoc()) {
@@ -41,10 +48,7 @@ class Shop
                 array_push($this->items, $shopItem);
             }
         }
-    }
-    
-    public function getItems() {
-        return $this->items;
+        return $this->getItems();
     }
     
     /**
@@ -57,11 +61,11 @@ class Shop
         $i = null;
         
         echo "<hr />";
-        foreach ($this->items as $i) {
+        foreach ($this->getItems() as $i) {
             if ($i->isEnabled())
                 $i->printRow(true, "<span class=\"text-muted\">(Years " . $i->getAvailability() . ")</span> ");
         }
-        foreach ($this->items as $i) {
+        foreach ($this->getItems() as $i) {
             if (!$i->isEnabled())
                 $i->printRow(false);
         }
@@ -80,7 +84,7 @@ class Shop
      */
     public function studentShop($yeargroup, $balance) {
         echo "<hr />";
-        foreach ($this->items as $i) {
+        foreach ($this->getItems() as $i) {
             if (!$i->availableForYearGroup($yeargroup))
                 continue;
             if (!$i->isEnabled())
