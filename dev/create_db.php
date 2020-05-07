@@ -12,18 +12,15 @@ $dbname = Config::$db['name'];
 
 $db->dosql("USE $dbname;", FALSE);
 
-echo "Got here";
-
-if (isset($lets_start_right_from_the_beginning) && $lets_start_right_from_the_beginning == TRUE) {
+if (Config::allowed_maintenance('lets_start_right_from_the_beginning')) {
     $db->dosql("DROP DATABASE $dbname;", FALSE); /* Don't mind if this fails */
     $db->dosql("CREATE DATABASE $dbname;");
     $db->dosql("USE $dbname;");
     include "reset_products.php";
-    $new_year = TRUE;
-}
-
-if (isset($new_year) && $new_year == TRUE)
     include "newyear.php";
+} else if (Config::allowed_maintenance('new_year')) {
+    include "newyear.php";
+}
 
 ?>
 </html>

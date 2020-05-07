@@ -49,6 +49,7 @@ class DBC
 		foreach($arr as $column => $value)
 		{
 			$prepareSets[] = "`$column` = :".$column;
+			$value; /* Silence warning! */
 		}
 		return $prepareSets;
 	}

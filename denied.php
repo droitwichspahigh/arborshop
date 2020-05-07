@@ -1,4 +1,6 @@
 <?php
+namespace ArborShop;
+
 require('bin/classes.php');
 ?>
 <html lang="en">
@@ -13,12 +15,12 @@ require('bin/classes.php');
 		<div class="card-body">
 			<a href="./"><img class="mb-4" src="img/times-circle.svg" alt="" width="72" height="72"></a>
 			<p class="text-footer text-muted">				
-				<?php if (!$maintenance) { ?>
+				<?php if (Config::allowed_maintenance()) { ?>
 					Access Denied: You are not authorised to use this resource.
-					Please contact <a href="mailto:<?= ArborShop\Config::$support_email ?>?subject=<?= ArborShop\Config::$site_name; ?>: Access Request">
-						<?= ArborShop\Config::$powered_by ?></a> if this is an error.
+					Please contact <a href="mailto:<?= Config::$support_email ?>?subject=<?= Config::$site_name; ?>: Access Request">
+						<?= Config::$powered_by ?></a> if this is an error.
 				<?php } else { ?>
-			        <?= ArborShop\Config::$site_name; ?> is currently under maintenance.  Please try again later.<?php } ?>
+			        <?= Config::$site_name; ?> is currently under maintenance.  Please try again later.<?php } ?>
 			</p>
 			<p class="text-footer text-muted">You're trying to access this site as <?= $_SERVER['PHP_AUTH_USER'];?></p>
 		</div>

@@ -1,18 +1,15 @@
 <?php
 
-namespace Arborshop;
-
-/** Only import this at the beginning of the year, and read it before doing so! */
-include 'maintenance.php';
-
+namespace ArborShop;
 
 class Config {
 
     static $brand_name = "Droitwich Spa High School";
     static $site_name = "The Rewards Shop";
     
-    static $site_url = "https://www.bayofrum.net/~crees/eclipse-pdt/arborshop";
+    static $site_url = "https://www.bayofrum.net/~crees/eclipse-pdt/git/arborshop";
     static $site_emaildomain = "arbor-mail.com";
+    static $site_docroot = "/home/crees/public_html/eclipse-pdt/git/arborshop";
     
     static $support_email = "reescm@droitwichspahigh.worcs.sch.uk";
     static $powered_by = "R";
@@ -24,10 +21,6 @@ class Config {
         'user' => "",
         'password' => '',
     );
-    
-    /* TODO
-     * Something about maintenance.php?
-     */
     
     static $db = array(
         'host' => "localhost:3306",
@@ -67,37 +60,119 @@ class Config {
         'staff'   => '^[a-zA-Z]+$',
     );
     
-    /* No user serviceable parts below this point */
+    /**
+     * Lock everyone out of the website and enable maintenance
+     */
+    private static $maintenance = TRUE;
+    
+    /**
+     * Set to TRUE to echo warnings and notices from SQL.  Relies on $maintenance
+     */
+    //private static $debug = TRUE;
+    
+    /**
+     * Everything inside the /dev hierarchy depends on this and $maintenance being TRUE
+     */
+    //private static $installer_mode = TRUE;
+    
+    /**
+     * Enable this to drop all the student records from the previous year.
+     *
+     * A September job!
+     * 
+     * Relies on $maintenance
+     */
+    //private static $new_year = TRUE;
+    
+    /**
+     * This means the ENTIRE database is going to be dropped and remade
+     * 
+     * Relies on all of the above
+     */
+    //private static $lets_start_right_from_the_beginning = TRUE;
+    
+    /* 
+     * 
+     * 
+     * No user serviceable parts below this point
+     * 
+     * 
+     * 
+     */
     
     static function is_admin($name) {
-        if (in_array($name, Config::$users['admin']))
+        if (in_array($name, self::$users['admin']))
             return true;
         return false;
     }
     
     static function is_shopmanager($name) {
-        if (in_array($name, Config::$users['shopmanagers']))
+        if (in_array($name, self::$users['shopmanagers']))
             return true;
-        return is_admin($name);
+        return self::is_admin($name);
     }
     
     static function is_shopkeeper($name) {
-        if (in_array($name, Config::$users['shopkeepers']))
+        if (in_array($name, self::$users['shopkeepers']))
             return true;
-        return is_shopmanager($name);
+        return self::is_shopmanager($name);
     }
     
-    static private function check_regex($name, $type) {
-        return preg_match('/^' . Config::$user_regexes[$type] . '/', $name);
+    static protected function check_regex($name, $type) {
+        return preg_match('/^' . self::$user_regexes[$type] . '/', $name);
     }
     
     static function is_student($name) {
-        return Config::check_regex($name, 'student');
+        return self::check_regex($name, 'student');
     }
     
     static function is_staff($name) {
-        return Config::check_regex($name, 'staff');
+        return self::check_regex($name, 'staff');
     }
+    /**
+     * Possible values for $query: (none), just checks whether Config::$maintenance is true
+     *                             debug
+     *                             installer
+     *                             new_year
+     *                             lets_start_right_from_the_beginning
+     * @param string $query
+     * @return boolean
+     */
+    static function allowed_maintenance($query = "maintenance_mode") {
+        if (!isset(self::$maintenance) || !self::$maintenance) {
+            return FALSE;
+        }
+        switch ($query) {
+            case 'maintenance_mode':
+                return TRUE;
+            case 'debug':
+                if (isset(self::$debug) && self::$debug)
+                    return TRUE;
+                    break;
+            case 'installer':
+                if (isset(self::$installer_mode) && self::$installer_mode)
+                    return TRUE;
+                    break;
+            case 'new_year':
+                if (isset(self::$new_year) && self::$new_year)
+                    return TRUE;
+                    break;
+            case 'lets_start_right_from_the_beginning':
+                if (isset(self::$lets_start_right_from_the_beginning) &&
+                self::$lets_start_right_from_the_beginning)
+                    return TRUE;
+                    break;
+            default:
+                break;
+        }
+        return FALSE;
+    }
+    static function debug($msg) {
+        if (self::allowed_maintenance('debug')) {
+            echo $msg;
+        }
+    }
+   
 }
 
 if(empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == "off") {

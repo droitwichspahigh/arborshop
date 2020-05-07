@@ -26,7 +26,7 @@ if(isset($_SERVER['PHP_AUTH_USER'])) {
 		<div class="card-body">
 			<form action="index.php" method="post">
 				<img class="mb-4 w-100" src="img/logo_v2.jpg" alt="Droitwich Spa High School">
-				<h3 class="mb-3"><?= Config::$site_name; ?></h1>
+				<h3 class="mb-3"><?= Config::$site_name; ?></h3>
 				<button type="submit" name="authenticate" class="btn btn-lg btn-primary btn-block mb-3">Sign in</button>
 				<p class="small text-muted">Please enter your school username and password when prompted.</p>
 				<hr />

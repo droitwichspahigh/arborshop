@@ -57,7 +57,7 @@ class Student {
          *
          * We sum the values to get points.
          */
-        for ($pointValue = -4; $pointValue <= 4; $pointValue++) {
+        for ($pointValue = -5; $pointValue <= 5; $pointValue++) {
             /* Now get behavioural incidents */
             $behaviourQuery = new \Arbor\Query\Query(\Arbor\Resource\ResourceType::BEHAVIOURAL_INCIDENT_STUDENT_INVOLVEMENT);
             

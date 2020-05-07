@@ -27,14 +27,6 @@ class Database {
         }
     }
 
-    private function debug($msg) {
-        global $debug;
-
-        if (isset($debug) && $debug) {
-            echo $msg;
-        }
-    }
-
     /**
      * Performs an SQL operation.
      * 
@@ -44,12 +36,12 @@ class Database {
      */
     function dosql($sqlcmd, $critical = TRUE) {        
         if ($result = $this->conn->query($sqlcmd)) {
-            $this->debug("$sqlcmd performed successfully<br /><br />");
+            Config::debug("$sqlcmd performed successfully<br /><br />");
         } else {
             if ($critical == TRUE) {
                 die ("Error:   $sqlcmd failed: " . $this->conn->error);
             } else {
-                $this->debug("Warning: $sqlcmd failed: " . $this->conn->error);
+                Config::debug("Warning: $sqlcmd failed: " . $this->conn->error);
             }
         }
         return $result;
