@@ -87,8 +87,12 @@ class ShopItem
             $rowclass = "bg-secondary";
         } else {
             $d = "$description_prefix $d";
-            if ($linked)
-                $link = "<a href=\"?purchase=$this->id\" class=\"stretched-link\"></a>";
+            if ($linked) {
+                if (isset($_GET['masquerade_name'])) {
+                    $m = '&masquerade_name=' . $_GET['masquerade_name'];
+                }
+                $link = "<a href=\"?purchase=$this->id$m\" class=\"stretched-link\"></a>";
+            }
         }
         echo <<<EOF
 <div class="row $rowclass">
