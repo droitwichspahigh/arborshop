@@ -2,7 +2,8 @@
 
 /**
  * From create_db.php 
- * @var ArborShop\Database $db */
+ * @var ArborShop\Database $db
+ */
 
 $db->dosql("DROP TABLE purchases;", FALSE);
 
@@ -23,4 +24,12 @@ $db->dosql("CREATE TABLE spent (
         arbor_id INT NOT NULL,
         spent SMALLINT UNSIGNED NOT NULL DEFAULT 0,
         CONSTRAINT spent_pk PRIMARY KEY (spent_id)
+    );");
+
+$db->dosql("CREATE TABLE pointscache (
+        pointscache_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+        arbor_id INT NOT NULL,
+        ts TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        arborPoints SMALLINT NOT NULL DEFAULT 0,
+        CONSTRAINT pointscache_id PRIMARY KEY (pointscache_id)
     );");
