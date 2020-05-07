@@ -85,7 +85,7 @@ class ShopItem
         $link = "";
         if (!$available) {
             $rowclass = "bg-secondary";
-        } else {                
+        } else {
             $d = "$description_prefix $d";
             if ($linked)
                 $link = "<a href=\"?purchase=$this->id\" class=\"stretched-link\"></a>";
