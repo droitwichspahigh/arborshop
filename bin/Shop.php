@@ -18,8 +18,11 @@ class Shop
      *  
      * @param Database $conn
      */
-    public function __construct($db)
+    public function __construct($db = null)
     {
+        if ($db == null) {
+            $db = new Database();
+        }
         $this->db = $db;
     }
     
@@ -49,6 +52,20 @@ class Shop
             }
         }
         return $this->getItems();
+    }
+    
+    /** 
+     * @param integer $itemId
+     * @return \ArborShop\ShopItem
+     */
+    public function getItemById($itemId) {
+        
+        foreach ($this->getItems() as $i) {
+            if ($i->getId() == $itemId) {
+                return $i;
+            }
+        }
+        return false;
     }
     
     /**

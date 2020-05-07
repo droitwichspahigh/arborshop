@@ -33,6 +33,8 @@ class ShopItem
         $this->enabled = ($enabled == 1) ? TRUE : FALSE;
     }
     
+    public function getId() { return $this->id; }
+    
     public function getName() { return $this->name; }
     
     public function getPrice() { return $this->price; }

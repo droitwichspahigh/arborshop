@@ -17,6 +17,14 @@ $db = new Database();
 $shop = new Shop($db);
 $student = new Student($masqueraded_username);
 
+if (isset($_GET['purchase'])) {
+    require "bin/do_purchase.php";
+}
+
+if (isset($_GET['successful_purchase'])) {
+    /* TODO Congratulate the kid here */
+}
+
 ?>
 <html lang="en">
 <head>
@@ -35,9 +43,12 @@ $student = new Student($masqueraded_username);
 	<?php } ?>
 	<div class="container">
     	<div class="text-center"><img class="mb-4 img-responsive" src="../img/logo_v2.jpg" alt="" height="72" /></div>
-    	<h1 class="h3 font-weight-normal">Welcome to <?= Config::$site_name; ?>, <?= $student->getFirstName(); ?>.</h1>
-    	<div id="user-details">
-    		You have <?= $student->getPoints(); ?> points to spend.  Please have a look at the products available for you below, and click on them to purchase.
+    	<h3 class="h3 font-weight-normal mb-4">Welcome to <?= Config::$site_name; ?>, <?= $student->getFirstName(); ?>.</h3>
+    	<div id="user-details" class="mb-3">
+    		You have <em><?= $student->getPoints(); ?></em> points to spend.  Please have a look at the products available for you below, and click on them to purchase.
+    	</div>
+    	<div>
+    		<a href="previous-purchases.php<?= $masqueraded_username != "" ? "?masquerade_user=$masqueraded_username" : ""; ?>" class="btn btn-primary">Review previous purchases</a>
     	</div>
     	<?php 
         	$shop->studentShop($student->getYearGroup(), $student->getPoints());
