@@ -13,6 +13,8 @@ require 'bin/masquerade.php';
  * The apparent username of the student
  */
 
+$db = new Database();
+$shop = new Shop($db);
 $student = new Student($masqueraded_username);
 
 ?>
@@ -38,7 +40,6 @@ $student = new Student($masqueraded_username);
     		You have <?= $student->getPoints(); ?> points to spend.  Please have a look at the products available for you below, and click on them to purchase.
     	</div>
     	<?php 
-        	$shop = new Shop(new Database());
         	$shop->studentShop($student->getYearGroup(), $student->getPoints());
         ?>
     	
