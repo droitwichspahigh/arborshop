@@ -21,7 +21,23 @@ if (isset($_GET['purchase'])) {
     require "bin/do_purchase.php";
 }
 
-if (isset($_GET['successful_purchase'])) {
+?>
+<html lang="en">
+<head>
+	<?php require ('../bin/head.php');?>
+</head>
+
+<body>
+	<?php if (isset($_GET['masquerade_name'])) { ?>
+	<!-- Probably an Administrator, but this link will deny if someone
+	     tries just setting ?masquerade= anyway -->
+	     <nav aria-label="breadcrumb">
+	     	<ol class="breadcrumb">
+	     		<li class="breadcrumb-item"><a href="../">Back to staff area</a></li>
+	     	</ol>
+	     </nav>
+	<?php } else echo "<br />"; ?>
+<?php if (isset($_GET['successful_purchase'])) {
 echo <<<EOF
 <div class="modal fade" id="successfulPurchase" tabindex="-1" role="dialog" aria-labelledby="successfulPurchaseLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -41,26 +57,13 @@ echo <<<EOF
     </div>
   </div>
 </div>
-<script><!--$('successfulPurchase').modal(); //--></script>
+<script>
+$(document).ready(function(){
+    $('#successfulPurchase').modal('show');
+});
+</script>
 EOF;
-}
-
-?>
-<html lang="en">
-<head>
-	<?php require ('../bin/head.php');?>
-</head>
-
-<body>
-	<?php if (isset($_GET['masquerade_name'])) { ?>
-	<!-- Probably an Administrator, but this link will deny if someone
-	     tries just setting ?masquerade= anyway -->
-	     <nav aria-label="breadcrumb">
-	     	<ol class="breadcrumb">
-	     		<li class="breadcrumb-item"><a href="../">Back to staff area</a></li>
-	     	</ol>
-	     </nav>
-	<?php } else echo "<br />"; ?>
+} ?>
 	<div class="container">
     	<div class="text-center"><img class="mb-4 img-responsive" src="../img/logo_v2.jpg" alt="" height="72" /></div>
     	<h3 class="h3 font-weight-normal mb-4">Welcome to <?= Config::$site_name; ?>, <?= $student->getFirstName(); ?>.</h3>
@@ -68,7 +71,7 @@ EOF;
     		You have <span class="font-weight-bold"><?= $student->getPoints(); ?></span> points to spend.  Please have a look at the products available for you below, and click on them to purchase.
     	</div>
     	<div>
-    		<a href="previous-purchases.php<?= $masqueraded_username != "" ? "?masquerade_user=$masqueraded_username" : ""; ?>" class="btn btn-primary">Review previous purchases</a>
+    		<a href="review_purchases.php<?= $masqueraded_username != "" ? "?masquerade_user=$masqueraded_username" : ""; ?>" class="btn btn-primary">Review previous purchases</a>
     	</div>
     	<?php 
         	$shop->studentShop($student->getYearGroup(), $student->getPoints());
