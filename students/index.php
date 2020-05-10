@@ -22,7 +22,27 @@ if (isset($_GET['purchase'])) {
 }
 
 if (isset($_GET['successful_purchase'])) {
-    /* TODO Congratulate the kid here */
+echo <<<EOF
+<div class="modal fade" id="successfulPurchase" tabindex="-1" role="dialog" aria-labelledby="successfulPurchaseLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="successfulPurchaseLabel">Congratulations on your purchase!</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Please find the Shop during its opening times to claim your purchase.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script><!--$('successfulPurchase').modal(); //--></script>
+EOF;
 }
 
 ?>
