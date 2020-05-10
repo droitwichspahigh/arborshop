@@ -6,12 +6,12 @@ class Purchase
     protected $item = null, $purchase_id, $arbor_id, $datetime, $price, $item_id, $collected;
 
     public function __construct($p) {
-        $this->purchase_id = $p['purchase_id'];
-        $this->arbor_id = $p['arbor_id'];
-        $this->datetime = $p['datetime'];
-        $this->price = $p['price'];
-        $this->item_id = $p['item_id'];
-        $this->collected = $p['collected'];
+        $this->purchase_id = $p[0];
+        $this->arbor_id = $p[1];
+        $this->datetime = $p[2];
+        $this->price = $p[3];
+        $this->item_id = $p[4];
+        $this->collected = $p[5];
     }
     
     public function getPurchaseId() { return $this->purchase_id; }
