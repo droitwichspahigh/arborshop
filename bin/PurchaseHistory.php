@@ -24,7 +24,7 @@ class PurchaseHistory
         if ($this->purchases != null)
             return $this->purchases;
         
-        $result = $this->db->dosql('SELECT * FROM purchases WHERE arbor_id = ' . $this->student->getId() . ';');
+        $result = $this->db->dosql('SELECT * FROM purchases WHERE arbor_id = ' . $this->student->getId() . ' ORDER BY datetime DESC;');
         
         $this->purchases = [];
         
@@ -65,9 +65,26 @@ class PurchaseHistory
             return FALSE;
         }
         return TRUE;
-        
-        
-        
+    }
+    
+    /**
+     * @param int $purchaseId
+     */
+    function deletePurchase($purchaseId) {
+        /** @var \ArborShop\Purchase $p */
+        foreach ($this->getPurchases() as $p) {
+            if ($p->getPurchaseId() == $purchaseId) {
+                if ($p->getCollected != "") {
+                    die("Nice try- you've already collected this purchase...");
+                }
+                $this->db->dosql("DELETE FROM purchases WHERE purchase_id = '$purchaseId';");
+                $this->student->debitPoints(-($p->getPrice()));
+                /* Invalidate cached purchases */
+                $this->purchases = null;
+                return true;
+            }
+        }
+        die("Nice try- purchase $purchaseId not found...");
     }
 
     function __destruct()
