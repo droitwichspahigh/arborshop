@@ -37,8 +37,7 @@ if (isset($_GET['purchase'])) {
 	     	</ol>
 	     </nav>
 	<?php } else echo "<br />"; ?>
-<?php if (isset($_GET['successful_purchase'])) {
-echo <<<EOF
+<?php if (isset($_GET['successful_purchase'])) { ?>
 <div class="modal fade" id="successfulPurchase" tabindex="-1" role="dialog" aria-labelledby="successfulPurchaseLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -62,8 +61,7 @@ $(document).ready(function(){
     $('#successfulPurchase').modal('show');
 });
 </script>
-EOF;
-} ?>
+<?php } ?>
 	<div class="container">
     	<div class="text-center"><img class="mb-4 img-responsive" src="../img/logo_v2.jpg" alt="" height="72" /></div>
     	<h3 class="h3 font-weight-normal mb-4">Welcome to <?= Config::$site_name; ?>, <?= $student->getFirstName(); ?>.</h3>
@@ -71,7 +69,7 @@ EOF;
     		You have <span class="font-weight-bold"><?= $student->getPoints(); ?></span> points to spend.  Please have a look at the products available for you below, and click on them to purchase.
     	</div>
     	<div>
-    		<a href="review_purchases.php<?= $masqueraded_username != "" ? "?masquerade_user=$masqueraded_username" : ""; ?>" class="btn btn-primary">Review previous purchases</a>
+    		<a href="review_purchases.php<?= $masqueraded_username != "" ? "?masquerade_name=$masqueraded_username" : ""; ?>" class="btn btn-primary">Review previous purchases</a>
     	</div>
     	<?php 
         	$shop->studentShop($student->getYearGroup(), $student->getPoints());
