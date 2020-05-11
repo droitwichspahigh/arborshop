@@ -28,7 +28,7 @@ require "../bin/classes.php";
 		if (Config::is_shopkeeper($auth_user)) { ?>
 			<p>As you are a shopkeeper, you may sell products to students.  <?= $sm_msg; ?></p>
 			
-			<p><a class="btn btn-success" href="sell.php">Process sales</a> <?= $sm_btn; ?></p>
+			<p><a class="btn btn-success" href="shopkeeper/index.php">Process sales</a> <?= $sm_btn; ?></p>
 		<?php } ?>
     	
         <!-- Give the shop items -->

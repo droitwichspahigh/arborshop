@@ -19,8 +19,16 @@ class Student {
     protected $arborResourceStudentUrl = null;
     protected $db = null;
     
-    public function __construct($userName) {
-        $this->userName = $userName;
+    /**
+     * 
+     * @param mixed $userName_or_arborId
+     */
+    public function __construct($userName_or_arborId) {        
+        if (is_numeric($userName_or_arborId)) {
+            $this->arborResourceStudentId = $userName_or_arborId;
+        } else {
+            $this->userName = $userName_or_arborId;
+        }
         $arbor = new ArborConnection();
         $this->arborApi = $arbor->getApi();
     }
@@ -169,6 +177,12 @@ class Student {
     
     protected function getArborResourceStudent() {
         if ($this->arborResourceStudent != null) {
+            return $this->arborResourceStudent;
+        }
+        
+        if (!is_null($this->arborResourceStudentId)) {
+            $this->arborResourceStudent = \Arbor\Model\Student::retrieve($this->arborResourceStudentId);
+            $this->arborResourceStudentUrl = $this->arborResourceStudent->getResourceUrl();
             return $this->arborResourceStudent;
         }
 

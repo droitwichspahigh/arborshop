@@ -109,6 +109,22 @@ class PurchaseDb
         die("Nice try- purchase $purchaseId not found...");
     }
     
+    function collect($purchaseId) {
+        foreach ($this->getPurchases() as $p) {
+            if ($p->getPurchaseId() == $purchaseId) {
+                $this->db->dosql("UPDATE purchases SET collected = NOW() WHERE purchase_id = $purchaseId;");
+            }
+        }
+    }
+    
+    function uncollect($purchaseId) {
+        foreach ($this->getPurchases() as $p) {
+            if ($p->getPurchaseId() == $purchaseId) {
+                $this->db->dosql("UPDATE purchases SET collected = NULL WHERE purchase_id = $purchaseId;");
+            }
+        }        
+    }
+    
     
     function __destruct()
     {}
