@@ -5,3 +5,4 @@ If they are wrong, it will break, perhaps in strange and unpleasant ways.
 AY begins on 01/09 and ends on 31/08
 There will not be awards of +6 or -6 points upwards
 Kids' usernames will ALWAYS begin with two digits (default regex in config.php)
+Have we thought about parents' usernames?

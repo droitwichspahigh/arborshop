@@ -8,7 +8,7 @@ if (!class_exists("ArborShop\Config")) {
     require 'ArborConnection.php';
     require 'Database.php';
     require 'Purchase.php';
-    require 'StudentReceiptWallet.php';
+    require 'PurchaseDb.php';
     require 'Shop.php';
     require 'ShopItem.php';
     require 'Student.php';
