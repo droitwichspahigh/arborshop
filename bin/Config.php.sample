@@ -169,8 +169,7 @@ class Config {
     }
     static function debug($msg) {
         if (self::allowed_maintenance('debug')) {
-            echo $msg;
+            echo "<br />" . substr(round(microtime(true) * 1000), 6) . " $msg\n";
         }
-    }
-   
+    }   
 }
