@@ -51,7 +51,7 @@ if (isset($_GET['purchase'])) {
         Please find the Shop during its opening times to claim your purchase.
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary">OK</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
       </div>
     </div>
   </div>
@@ -68,11 +68,13 @@ $(document).ready(function(){
     	<div id="user-details" class="mb-3">
     		You have <span class="font-weight-bold"><?= $student->getPoints(); ?></span> points to spend.  Please have a look at the products available for you below, and click on them to purchase.
     	</div>
-    	<div>
-    		<a href="review_purchases.php<?= $masqueraded_username != "" ? "?masquerade_name=$masqueraded_username" : ""; ?>" class="btn btn-primary">Review previous purchases</a>
-    	</div>
-    	<?php 
-        	$shop->studentShop($student->getYearGroup(), $student->getPoints());
+    	<?php
+    	if ($student->getSpentPoints() > 0) {
+    	   echo "<div>";
+    	   echo '<a href="review_purchases.php' . ($masqueraded_username != "" ? "?masquerade_name=$masqueraded_username" : "") . '" class="btn btn-primary">Review previous purchases</a>';
+    	   echo '</div>';
+    	}
+        $shop->studentShop($student->getYearGroup(), $student->getPoints());
         ?>
     	
 	</div>
