@@ -20,7 +20,7 @@ class Shop
      */
     public function __construct($db = null)
     {
-        if ($db == null) {
+        if (is_null($db)) {
             $db = new Database();
         }
         $this->db = $db;

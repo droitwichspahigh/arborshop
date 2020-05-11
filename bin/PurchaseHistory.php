@@ -13,7 +13,7 @@ class PurchaseHistory
      */
     public function __construct($student, $db = null)
     {
-        if ($db == null) {
+        if (is_null($db)) {
             $db = new Database();
         }
         $this->db = $db;
@@ -21,7 +21,7 @@ class PurchaseHistory
     }
     
     function getPurchases() {
-        if ($this->purchases != null)
+        if (is_null($this->purchases))
             return $this->purchases;
         
         $result = $this->db->dosql('SELECT * FROM purchases WHERE arbor_id = ' . $this->student->getId() . ' ORDER BY datetime DESC;');

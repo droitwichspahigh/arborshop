@@ -73,7 +73,7 @@ class Student {
          * five minutes!
          */
         
-        if ($this->db == null) {
+        if (is_null($this->db)) {
             $this->db = new Database();
         }
         
@@ -128,7 +128,7 @@ class Student {
         if ($this->spentPoints != null) {
             return $this->spentPoints;
         }
-        if ($this->db == null) {
+        if (is_null($this->db)) {
             $this->db = new Database();
         }
         /* Now let's grab the spent points from the database */
@@ -146,7 +146,7 @@ class Student {
     }
     
     function debitPoints($figure) {
-        if ($this->db == NULL) {
+        if (is_null($this->db)) {
             $this->db = new Database();
         }
         /* First debit the student's account */
@@ -217,7 +217,7 @@ class Student {
     }
     
     protected function getArborResourceStudentId() {
-        if ($this->arborResourceStudentId == null) {
+        if (is_null($this->arborResourceStudentId)) {
             $this->getArborResourceStudent();
         }
         
@@ -234,7 +234,7 @@ class Student {
     }
     
     protected function getArborResourceStudentUrl() {
-        if ($this->arborResourceStudentUrl == null) {
+        if (is_null($this->arborResourceStudentUrl)) {
             $this->getArborResourceStudent();
         }
             
