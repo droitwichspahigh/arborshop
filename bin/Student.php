@@ -1,6 +1,7 @@
 <?php
 
 namespace ArborShop;
+use function \ArborShop\Config;
 
 require "classes.php";
 
@@ -12,8 +13,9 @@ class Student {
     protected $behaviourNetPoints = null;
     protected $spentPoints = null;
     protected $year_group;
-    protected $firstName;
-    protected $lastName;
+    protected $firstName = null;
+    protected $lastName = null;
+    protected $arborPerson = null;
     protected $arborResourceStudent = null;
     protected $arborResourceStudentId = null;
     protected $arborResourceStudentUrl = null;
@@ -62,17 +64,23 @@ class Student {
             return $this->points;
         }
         
+        Config::debug("Student::getPoints: uncached");
+        
         $this->points = 0;
         
         $this->points += $this->getBehaviourNetPoints();
         
+        Config::debug("Student::getPoints: behaviour obtained");
+        
         $this->points -= $this->getSpentPoints();
+        
+        Config::debug("Student::getPoints: spent points obtained");
         
         return $this->getPoints();
     }
     
     protected function getBehaviourNetPoints() {
-        if ($this->behaviourNetPoints != null) {
+        if (!is_null($this->behaviourNetPoints)) {
             return $this->behaviourNetPoints;
         }
         
@@ -90,15 +98,19 @@ class Student {
         /* Sometimes accidental duplicates appear, we'll clean them up and purge */
         if ($pointsCache_query->num_rows == 1) {
             $row = $pointsCache_query->fetch_row();
+            Config::debug("Student::getBehaviourNetPoints: row[1] = '$row[1]' and time() = '" . time() . "'");
             if ($row[1] > (time() - 300)) {
+                Config::debug("Student::getBehaviourNetPoints: cache hit from points database");
                 $this->behaviourNetPoints = $row[0];
-                return $this->getBehaviourNetPoints();
-            } else {
-                $this->db->dosql("DELETE FROM pointsCache WHERE arbor_id = '$this->arborResourceStudentId';");
+                return $this->behaviourNetPoints;
             }
         }
+
+        $this->db->dosql("DELETE FROM pointsCache WHERE arbor_id = '$this->arborResourceStudentId';");
            
         $this->behaviourNetPoints = 0;
+        
+        Config::debug("Student::getBehaviourNetPoints: arbor query");
         
         /* So... we get a list of incidents for x points, for all severity values.
          *
@@ -128,9 +140,11 @@ class Student {
             $this->behaviourNetPoints += $pointValue * sizeof($this->arborApi->query($behaviourQuery));
         }
         
+        Config::debug("Student::getBehaviourNetPoints done");
+        
         $this->db->dosql("INSERT INTO pointsCache (arbor_id, arborPoints) VALUES ('$this->arborResourceStudentId', '$this->behaviourNetPoints');");
         
-        return $this->getBehaviourNetPoints();
+        return $this->behaviourNetPoints;
     }
     
     function getSpentPoints() {
@@ -180,12 +194,16 @@ class Student {
             return $this->arborResourceStudent;
         }
         
+        Config::debug("Student::getArborResourceStudent: cache miss");
+        
         if (!is_null($this->arborResourceStudentId)) {
             $this->arborResourceStudent = \Arbor\Model\Student::retrieve($this->arborResourceStudentId);
             $this->arborResourceStudentUrl = $this->arborResourceStudent->getResourceUrl();
             return $this->arborResourceStudent;
         }
 
+        Config::debug("Student::getArborResourceStudent: finding via email");
+        
         $emailQuery = new \Arbor\Query\Query(\Arbor\Resource\ResourceType::EMAIL_ADDRESS);
         /* This is where we'll query network login */
         $emailQuery->addPropertyFilter(\Arbor\Model\EmailAddress::EMAIL_ADDRESS,
@@ -197,10 +215,16 @@ class Student {
         if (!isset($emailAddress[0])) {
             die("Your email address " . $this->userName . '@' . Config::$site_emaildomain ." appears unrecognised.");
         }
-        /* Awesome, so we can get the Arbor ID of the pupil, and all is unlocked */
-        $this->arborResourceStudentId = $emailAddress[0]->getEmailAddressOwner()->getResourceId();
         
-        $this->arborResourceStudentUrl = $emailAddress[0]->getEmailAddressOwner()->getResourceUrl();
+        Config::debug("Student::getArborResourceStudent: email found");
+        
+        $owner = $emailAddress[0]->getEmailAddressOwner();
+        
+        /* Awesome, so we can get the Arbor ID of the pupil, and all is unlocked */
+        $this->arborResourceStudentId = $owner->getResourceId();
+        $this->arborResourceStudentUrl = $owner->getResourceUrl();
+        
+        Config::debug("Student::getArborResourceStudent: found via email");
         
         try {
             $this->arborResourceStudent = $this->arborApi->retrieve(\Arbor\Resource\ResourceType::STUDENT, $this->arborResourceStudentId);
@@ -211,12 +235,22 @@ class Student {
         return $this->arborResourceStudent;
     }
     
+    function getPerson() {
+        if (!is_null($this->arborPerson)) {
+            return $this->arborPerson;
+        }
+        
+        $this->arborPerson = $this->getArborResourceStudent()->getPerson();
+        
+        return $this->arborPerson;
+    }
+    
     function getFirstName() {
         if ($this->firstName != null) {
             return $this->firstName;
         }
 
-        $this->firstName = $this->getArborResourceStudent()->getPerson()->getPreferredFirstName();
+        $this->firstName = $this->getPerson()->getPreferredFirstName();
         
         return $this->getFirstName();
     }
@@ -226,7 +260,7 @@ class Student {
             return $this->lastName;
         }
         
-        $this->lastName = $this->getArborResourceStudent()->getPerson()->getPreferredLastName();
+        $this->lastName = $this->getPerson()->getPreferredLastName();
         
         return $this->getLastName();
     }
