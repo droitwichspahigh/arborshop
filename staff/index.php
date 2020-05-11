@@ -1,5 +1,5 @@
 <?php
-use ArborShop\Config;
+namespace ArborShop;
 
 require "../bin/auth.php";
 require "../bin/classes.php";
@@ -33,20 +33,13 @@ require "../bin/classes.php";
     	
         <!-- Give the shop items -->
         <?php 
-        	$shop = new ArborShop\Shop(new ArborShop\Database());
+        	$shop = new Shop();
         	$shop->staffShop();
         ?>
     	
     	<p></p>
     	
     </div>
-    	
-    	
-    	
-    	
-    	
-    	
-    	
 <?php
 if (!Config::is_shopkeeper($auth_user)) {
 ?>
