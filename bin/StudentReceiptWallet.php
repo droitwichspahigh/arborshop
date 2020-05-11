@@ -1,7 +1,7 @@
 <?php
 namespace ArborShop;
 
-class PurchaseHistory
+class StudentReceiptWallet
 {
     protected $student;
     protected $purchases = null;

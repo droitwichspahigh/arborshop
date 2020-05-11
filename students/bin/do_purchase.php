@@ -22,7 +22,7 @@ $itemId = $_GET['purchase'];
  */
 $item = $shop->getItemById($itemId);
 
-$purchaseHistory = new PurchaseHistory($student, $db);
+$purchaseHistory = new StudentReceiptWallet($student, $db);
 
 if (!$purchaseHistory->addPurchase($item)) {
     die("No idea why your purchase failed, but it did...");

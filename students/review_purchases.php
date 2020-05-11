@@ -16,7 +16,7 @@ require 'bin/masquerade.php';
 $db = new Database();
 $shop = new Shop($db);
 $student = new Student($masqueraded_username);
-$purchaseHistory = new PurchaseHistory($student);
+$studentReceiptWallet = new StudentReceiptWallet($student);
 
 if ($masqueraded_username != "") {
     $m = "&masquerade_name=$masqueraded_username";
@@ -24,7 +24,7 @@ if ($masqueraded_username != "") {
     $m = "";
 }
 if (isset($_GET['cancel'])) {
-    $purchaseHistory->deletePurchase($_GET['cancel']);
+    $studentReceiptWallet->deletePurchase($_GET['cancel']);
     header("Location: review_purchases.php?dummy=none$m");
 }
 
@@ -45,7 +45,7 @@ if (isset($_GET['cancel'])) {
     	<?php
     	/* Let's first get the ones we can cancel */
     	/** @var Purchase $p */
-    	if ($purchases = $purchaseHistory->getPurchases()) {
+    	if ($purchases = $studentReceiptWallet->getPurchases()) {
         	foreach ($purchases as $p) {
         	    if ($p->getCollected() == "") {
         	        $itemName = $shop->getItemById($p->getItemId())->getName();    
