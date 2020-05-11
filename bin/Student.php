@@ -79,7 +79,8 @@ class Student {
         
         $pointsCache_query = $this->db->dosql("SELECT arborPoints, UNIX_TIMESTAMP(ts) FROM pointsCache WHERE arbor_id = '$this->arborResourceStudentId';");
         
-        if ($pointsCache_query->num_rows > 0) {
+        /* Sometimes accidental duplicates appear, we'll clean them up and purge */
+        if ($pointsCache_query->num_rows == 1) {
             $row = $pointsCache_query->fetch_row();
             if ($row[1] > (time() - 300)) {
                 $this->behaviourNetPoints = $row[0];
