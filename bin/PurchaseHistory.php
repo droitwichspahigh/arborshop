@@ -21,7 +21,7 @@ class PurchaseHistory
     }
     
     function getPurchases() {
-        if (is_null($this->purchases))
+        if (!is_null($this->purchases))
             return $this->purchases;
         
         $result = $this->db->dosql('SELECT * FROM purchases WHERE arbor_id = ' . $this->student->getId() . ' ORDER BY datetime DESC;');
