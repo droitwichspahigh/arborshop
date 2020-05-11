@@ -124,7 +124,7 @@ class Student {
         return $this->getBehaviourNetPoints();
     }
     
-    protected function getSpentPoints() {
+    function getSpentPoints() {
         if ($this->spentPoints != null) {
             return $this->spentPoints;
         }
