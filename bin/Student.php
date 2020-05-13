@@ -2,13 +2,12 @@
 
 namespace ArborShop;
 use function \ArborShop\Config;
+use \GraphQL\QueryBuilder\QueryBuilder;
 
 require "classes.php";
 
 class Student {
-    protected $arborApi;
-    protected $userName;
-    protected $academic_year = [];        
+    /* Needs migrating
     protected $points = null;
     protected $behaviourNetPoints = null;
     protected $spentPoints = null;
@@ -19,153 +18,172 @@ class Student {
     protected $arborResourceStudent = null;
     protected $arborResourceStudentId = null;
     protected $arborResourceStudentUrl = null;
+    */
+    protected $academic_year = [];
     protected $db = null;
+    protected $detail = [];
+    /** @var GraphQLClient $client */
+    protected $client;
+    protected $query;
     
     /**
      * 
      * @param mixed $userName_or_arborId
      */
-    public function __construct($userName_or_arborId) {        
+    public function __construct($userName_or_arborId, $nameOnly = true) {        
+        $this->client = new GraphQLClient();
+
         if (is_numeric($userName_or_arborId)) {
-            $this->arborResourceStudentId = $userName_or_arborId;
+            $this->detail['arborId'] = $userName_or_arborId;
         } else {
-            $this->userName = $userName_or_arborId;
+            /*   Ugh, got to look up using email address */
+            Config::debug("Student::__construct: looking for email");
+            $tmpQueryBuilder = new QueryBuilder('EmailAddress');
+            $tmpQueryBuilder->setArgument("emailAddress", $userName_or_arborId . "@" . Config::$site_emaildomain);
+            $tmpQueryBuilder->selectField((new QueryBuilder('emailAddressOwner'))->selectField("id"));
+            $emailAddress = $this->client->query($tmpQueryBuilder->getQuery())->getData()['EmailAddress'];
+            Config::debug("Student::__construct: query complete");
+            if (!isset($emailAddress[0])) {
+                die("Your email address " . $userName_or_arborId . '@' . Config::$site_emaildomain ." appears unrecognised.");
+            }
+            if (isset($emailAddress[1])) {
+                die("Your email address appears to have more than one owner.  This cannot possibly be right");
+            }
+            if ($emailAddress[0]['emailAddressOwner']['entityType'] != 'Student') {
+                die("Your email address " . $userName_or_arborId . '@' . Config::$site_emaildomain ." appears not to belong to a student.");
+            }
+            Config::debug("Student::__construct: email found");
+            $this->detail['arborId'] = $emailAddress[0]['emailAddressOwner']['id'];
         }
-        $arbor = new ArborConnection();
-        $this->arborApi = $arbor->getApi();
+        $id = $this->detail['arborId'];
+        $this->query = <<<EOF
+Student (id: $id) {
+  id
+  preferredFirstName
+  preferredLastName
+  academicLevel {
+    id
+    shortName
+  }
+}
+EOF;
+        $queryArborForBehaviourPoints = false;
+        if (!$nameOnly) {
+            /* Before we query Arbor, let's see if we have them cached */
+            if ($this->getBehaviourNetPointsFromCache() == false) {
+                $queryArborForBehaviourPoints = true;
+                $ayEve = $this->getAY('eve');
+                $ayPost = $this->getAY('post');
+                $this->query .= <<<EOF
+BehaviouralIncidentStudentInvolvement (student__id: $id behaviouralIncident__incidentDatetime_before: "$ayPost" behaviouralIncident__incidentDatetime_after: "$ayEve") {
+  severity
+  student {
+    academicLevel {
+      shortName
+    }
+  }
+}
+EOF;
+            }
+        }
+        
+        $this->query = "query { $this->query }";
+        $result = $this->client->rawQuery($this->query)->getData();
+        
+        foreach (['preferredFirstName', 'preferredLastName'] as $n) {
+            $this->detail[$n] = $result['Student'][0][$n];
+        }
+        $this->detail['yearGroup'] = 
+            str_ireplace("Year ", "", $result['Student'][0]['academicLevel']['shortName']);
+        if ($queryArborForBehaviourPoints) {
+            $p = 0;
+            foreach ($result['BehaviouralIncidentStudentInvolvement'] as $i) {
+                $p += $i['severity'];
+            }
+            $this->detail['behaviourNetPoints'] = $p;
+            $this->db->dosql("INSERT INTO pointsCache (arbor_id, arborPoints) VALUES ('"
+                . $this->getId() . "', '"
+                . $this->getBehaviourNetPoints() . "');");
+        }
     }
     
-    protected function getAY($element = 'start') {
-        if (isset($this->academic_year[$element])) {
-            return $this->academic_year[$element];
-        }
-        
-        /* Let's find our academic year before we go any further */
-        $month = date("m");
-        $year = date("Y");
-        
-        if ($month >= 9) {
-            $this->academic_year['eve'] = "$year-08-31";
-            $this->academic_year['post'] = $year+1 . "-09-01";
-        } else {
-            $this->academic_year['eve'] = $year-1 . "-08-31";
-            $this->academic_year['post'] = "$year-09-01";
-        }
-        
-        /* Is it something we actually know? */
-        if (!array_key_exists($element, $this->academic_year))
-            die("There isn't such an element; $element for academic year");
-        
-        return $this->getAY($element);
-    }
+    function getId() {          return $this->detail['arborId']; }
+    function getFirstName() {   return $this->detail['preferredFirstName']; }
+    function getLastName() {    return $this->detail['preferredLastName']; }
+    function getYearGroup() {   return $this->detail['yearGroup']; }
+    
     
     function getPoints() {
-        if ($this->points != null) {
-            return $this->points;
+        if (isset($this->detail['points'])) {
+            return $this->detail['points'];
         }
         
-        Config::debug("Student::getPoints: uncached");
+        $points = 0;
         
-        $this->points = 0;
-        
-        $this->points += $this->getBehaviourNetPoints();
+        $points += $this->getBehaviourNetPoints();
         
         Config::debug("Student::getPoints: behaviour obtained");
         
-        $this->points -= $this->getSpentPoints();
+        $points -= $this->getSpentPoints();
         
         Config::debug("Student::getPoints: spent points obtained");
         
-        return $this->getPoints();
+        $this->detail['points'] = $points;
+        
+        return $this->detail['points'];
     }
     
     protected function getBehaviourNetPoints() {
-        if (!is_null($this->behaviourNetPoints)) {
-            return $this->behaviourNetPoints;
+        if (isset($this->detail['behaviourNetPoints'])) {
+            return $this->detail['behaviourNetPoints'];
         }
         
-        /* Arbor makes this really slow, so we're going
-         * to cache the result in the database.  Only for
-         * five minutes!
-         */
-        
+        die ("BUG: You didn't ask for points in the constructor");
+    }
+    
+    protected function getBehaviourNetPointsFromCache() {
         if (is_null($this->db)) {
             $this->db = new Database();
         }
         
-        $pointsCache_query = $this->db->dosql("SELECT arborPoints, UNIX_TIMESTAMP(ts) FROM pointsCache WHERE arbor_id = '$this->arborResourceStudentId';");
+        $pointsCache_query = $this->db->dosql("SELECT arborPoints, UNIX_TIMESTAMP(ts) FROM pointsCache WHERE arbor_id = '"
+                        . $this->getId() . "';");
         
         /* Sometimes accidental duplicates appear, we'll clean them up and purge */
         if ($pointsCache_query->num_rows == 1) {
             $row = $pointsCache_query->fetch_row();
-            Config::debug("Student::getBehaviourNetPoints: row[1] = '$row[1]' and time() = '" . time() . "'");
+            Config::debug("Student::getBehaviourNetPointsFromCache: row[1] = '$row[1]' and time() = '" . time() . "'");
             if ($row[1] > (time() - 300)) {
-                Config::debug("Student::getBehaviourNetPoints: cache hit from points database");
-                $this->behaviourNetPoints = $row[0];
-                return $this->behaviourNetPoints;
+                Config::debug("Student::getBehaviourNetPointsFromCache: cache hit from points database");
+                $this->detail['behaviourNetPoints'] = $row[0];
+                return $this->detail['behaviourNetPoints'];
             }
         }
-
-        $this->db->dosql("DELETE FROM pointsCache WHERE arbor_id = '$this->arborResourceStudentId';");
+        $this->db->dosql("DELETE FROM pointsCache WHERE arbor_id = '"
+                    . $this->getId() . "';");
            
-        $this->behaviourNetPoints = 0;
-        
-        Config::debug("Student::getBehaviourNetPoints: arbor query");
-        
-        /* So... we get a list of incidents for x points, for all severity values.
-         *
-         * We sum the values to get points.
-         */
-        for ($pointValue = -5; $pointValue <= 5; $pointValue++) {
-            /* Now get behavioural incidents */
-            $behaviourQuery = new \Arbor\Query\Query(\Arbor\Resource\ResourceType::BEHAVIOURAL_INCIDENT_STUDENT_INVOLVEMENT);
-            
-            $behaviourQuery->addPropertyFilter(
-                \Arbor\Model\User::STUDENT,
-                \Arbor\Query\Query::OPERATOR_EQUALS,
-                $this->getArborResourceStudentUrl());
-            
-            $behaviourQuery->addPropertyFilter(
-                \Arbor\Model\BehaviouralIncidentStudentInvolvement::SEVERITY,
-                \Arbor\Query\Query::OPERATOR_EQUALS,
-                $pointValue);
-            
-            $behaviourQuery->addPropertyFilter(
-                \Arbor\Model\BehaviouralIncidentStudentInvolvement::BEHAVIOURAL_INCIDENT
-                . '.'
-                . \Arbor\Model\BehaviouralIncident::INCIDENT_DATETIME,
-                \Arbor\Query\Query::OPERATOR_AFTER,
-                $this->getAY('eve'));
-            
-            $this->behaviourNetPoints += $pointValue * sizeof($this->arborApi->query($behaviourQuery));
-        }
-        
-        Config::debug("Student::getBehaviourNetPoints done");
-        
-        $this->db->dosql("INSERT INTO pointsCache (arbor_id, arborPoints) VALUES ('$this->arborResourceStudentId', '$this->behaviourNetPoints');");
-        
-        return $this->behaviourNetPoints;
+        return false;
     }
     
     function getSpentPoints() {
-        if ($this->spentPoints != null) {
-            return $this->spentPoints;
+        if (isset($this->detail['spentPoints'])) {
+            return $this->detail['spentPoints'];
         }
         if (is_null($this->db)) {
             $this->db = new Database();
         }
         /* Now let's grab the spent points from the database */
         $spent_query = $this->db->dosql("SELECT spent FROM spent WHERE arbor_id = "
-            . $this->getArborResourceStudentId() . ";");
+            . $this->getId() . ";");
         
         if ($spent_query->num_rows > 0) {
-            $this->spentPoints = $spent_query->fetch_row()[0];
+            $this->detail['spentPoints'] = $spent_query->fetch_row()[0];
         } else {
             /* This is their first visit.  Let's give them a new account! */
-            $this->db->dosql("INSERT INTO spent (arbor_id, spent) VALUES ('" . $this->getArborResourceStudentId() . "', '0');");
-            $this->spentPoints = 0;
+            $this->db->dosql("INSERT INTO spent (arbor_id, spent) VALUES ('" . $this->getId() . "', '0');");
+            $this->detail['spentPoints'] = 0;
         }
-        return $this->getSpentPoints();
+        return $this->detail['spentPoints'];
     }
     
     function debitPoints($figure) {
@@ -185,134 +203,37 @@ class Student {
         $this->db->dosql("UPDATE spent SET spent = '$newSpent' WHERE arbor_id = '$arborId'");
         
         /* We've just invalidated points, so we'll need to calculate them again */
-        $this->spentPoints = $newSpent;
-        $this->points = null;
+        $this->detail['spentPoints'] = $newSpent;
+        unset($this->detail['points']);
     }
     
-    protected function getArborResourceStudent() {
-        if ($this->arborResourceStudent != null) {
-            return $this->arborResourceStudent;
+    protected function getAY($element = 'start') {
+        if (isset($this->academic_year[$element])) {
+            return $this->academic_year[$element];
         }
         
-        Config::debug("Student::getArborResourceStudent: cache miss");
+        /* Let's find our academic year before we go any further */
+        $month = date("m");
+        $year = date("Y");
         
-        if (!is_null($this->arborResourceStudentId)) {
-            $this->arborResourceStudent = \Arbor\Model\Student::retrieve($this->arborResourceStudentId);
-            $this->arborResourceStudentUrl = $this->arborResourceStudent->getResourceUrl();
-            return $this->arborResourceStudent;
-        }
-
-        Config::debug("Student::getArborResourceStudent: finding via email");
-        
-        $emailQuery = new \Arbor\Query\Query(\Arbor\Resource\ResourceType::EMAIL_ADDRESS);
-        /* This is where we'll query network login */
-        $emailQuery->addPropertyFilter(\Arbor\Model\EmailAddress::EMAIL_ADDRESS,
-            \Arbor\Query\Query::OPERATOR_EQUALS,
-            $this->userName . '@' . Config::$site_emaildomain);
-        
-        $emailAddress = \Arbor\Model\EmailAddress::query($emailQuery);
-        
-        if (!isset($emailAddress[0])) {
-            die("Your email address " . $this->userName . '@' . Config::$site_emaildomain ." appears unrecognised.");
+        if ($month >= 9) {
+            $this->academic_year['eve'] = "$year-08-31";
+            $this->academic_year['start'] = "$year-09-01";
+            $this->academic_year['end'] = $year+1 . "-08-31";
+            $this->academic_year['post'] = $year+1 . "-09-01";
+        } else {
+            $this->academic_year['eve'] = $year-1 . "-08-31";
+            $this->academic_year['start'] = $year-1 . "-09-01";
+            $this->academic_year['end'] = "$year-08-31";
+            $this->academic_year['post'] = "$year-09-01";
         }
         
-        Config::debug("Student::getArborResourceStudent: email found");
-        
-        $owner = $emailAddress[0]->getEmailAddressOwner();
-        
-        /* Awesome, so we can get the Arbor ID of the pupil, and all is unlocked */
-        $this->arborResourceStudentId = $owner->getResourceId();
-        $this->arborResourceStudentUrl = $owner->getResourceUrl();
-        
-        Config::debug("Student::getArborResourceStudent: found via email");
-        
-        try {
-            $this->arborResourceStudent = $this->arborApi->retrieve(\Arbor\Resource\ResourceType::STUDENT, $this->arborResourceStudentId);
-        } catch (\Exception $e) {
-            die("You don't appear to be a student- are you a parent or staff?");
-        }
-
-        return $this->arborResourceStudent;
-    }
-    
-    function getPerson() {
-        if (!is_null($this->arborPerson)) {
-            return $this->arborPerson;
-        }
-        
-        $this->arborPerson = $this->getArborResourceStudent()->getPerson();
-        
-        return $this->arborPerson;
-    }
-    
-    function getFirstName() {
-        if ($this->firstName != null) {
-            return $this->firstName;
-        }
-
-        $this->firstName = $this->getPerson()->getPreferredFirstName();
-        
-        return $this->getFirstName();
-    }
-
-    function getLastName() {
-        if ($this->lastName != null) {
-            return $this->lastName;
-        }
-        
-        $this->lastName = $this->getPerson()->getPreferredLastName();
-        
-        return $this->getLastName();
-    }
-    
-    protected function getArborResourceStudentId() {
-        if (is_null($this->arborResourceStudentId)) {
-            $this->getArborResourceStudent();
-        }
-        
-        return $this->arborResourceStudentId;
-    }
-    
-    /**
-     * Gets the ArborId of the student
-     * 
-     * @return integer $id
-     */
-    function getId() {
-        return $this->getArborResourceStudentId();
-    }
-    
-    protected function getArborResourceStudentUrl() {
-        if (is_null($this->arborResourceStudentUrl)) {
-            $this->getArborResourceStudent();
-        }
+        /* Is it something we actually know? */
+        if (!array_key_exists($element, $this->academic_year))
+            die("There isn't such an element; $element for academic year");
             
-        return $this->arborResourceStudentUrl;
+            return $this->getAY($element);
     }
     
-    function getYearGroup() {
-        if ($this->year_group != null) {
-            return $this->year_group;
-        }
-        
-        $query = new \Arbor\Query\Query(\Arbor\Resource\ResourceType::ACADEMIC_LEVEL_MEMBERSHIP);
-        $query->addPropertyFilter(\Arbor\Model\User::STUDENT, \Arbor\Query\Query::OPERATOR_EQUALS, $this->getArborResourceStudentUrl());
-        $query->addPropertyFilter(\Arbor\Model\AcademicYear::START_DATE, \Arbor\Query\Query::OPERATOR_AFTER, $this->getAY('eve'));
-        $query->addPropertyFilter(\Arbor\Model\AcademicYear::END_DATE, \Arbor\Query\Query::OPERATOR_BEFORE, $this->getAY('post'));
-        $yearGroupMembershipList = $this->arborApi->query($query);
-        
-        if (!isset($yearGroupMembershipList[0])) {
-            die("You appear not to be a member of a year group...");
-        } else if (isset($yearGroupMembershipList[1])) {
-            die("You appear to be a member of two year groups!");
-        }
-        
-        $this->year_group = str_replace("Year ", "", $yearGroupMembershipList[0]->getProperty('academicLevel')->getProperty('shortName'));
-        
-        if (!is_numeric($this->year_group)) {
-            die("Something strange is going on; your year group is '$this->year_group' apparently, which I can't convert to a number.");
-        }
-            
-        return $this->year_group;
-    }
+    
 }

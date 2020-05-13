@@ -15,7 +15,7 @@ require 'bin/masquerade.php';
 
 $db = new Database();
 $shop = new Shop($db);
-$student = new Student($masqueraded_username);
+$student = new Student($masqueraded_username, false);
 $purchaseDb = new PurchaseDb($db);
 
 if ($masqueraded_username != "") {

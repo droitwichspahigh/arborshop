@@ -7,7 +7,7 @@ if (!class_exists("ArborShop\Config")) {
     require 'Config.php';
     require 'ArborConnection.php';
     require 'Database.php';
-    require 'GraphQLQuery.php';
+    require 'GraphQLClient.php';
     require 'Purchase.php';
     require 'PurchaseDb.php';
     require 'Shop.php';

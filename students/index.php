@@ -15,7 +15,7 @@ require 'bin/masquerade.php';
 
 $db = new Database();
 $shop = new Shop($db);
-$student = new Student($masqueraded_username);
+$student = new Student($masqueraded_username, false);
 
 if (isset($_GET['purchase'])) {
     require "bin/do_purchase.php";
