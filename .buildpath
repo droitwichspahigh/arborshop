@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <buildpath>
+	<buildpathentry kind="lib" path="contrib/php-graphql-client"/>
 	<buildpathentry kind="lib" path="contrib/sis-sdk-php/src/Arbor"/>
 	<buildpathentry kind="con" path="org.eclipse.php.core.LANGUAGE"/>
 	<buildpathentry excluding="contrib/" kind="src" path=""/>
