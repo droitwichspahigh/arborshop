@@ -5,7 +5,6 @@ error_reporting(-1);
 /* Have we been called before? */
 if (!class_exists("ArborShop\Config")) {
     require 'Config.php';
-    require 'ArborConnection.php';
     require 'Database.php';
     require 'GraphQLClient.php';
     require 'Purchase.php';
