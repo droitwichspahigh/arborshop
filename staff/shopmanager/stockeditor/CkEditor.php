@@ -147,7 +147,9 @@ class CkEditor extends Common
 	
 	function __construct()
 	{
-		session_start();
+		if (!isset($_SESSION)) {
+			session_start();
+		}
 		ob_start();
 		$this->initiateEditor();
 		if(isset($_POST['json']))
