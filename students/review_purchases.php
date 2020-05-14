@@ -42,6 +42,7 @@ if (isset($_GET['cancel'])) {
     	<div>
     		<a href="index.php<?= $masqueraded_username != "" ? "?masquerade_name=$masqueraded_username" : ""; ?>" class="btn btn-primary">Back to the shop</a>
     	</div>    	
+    	<hr />
     	<?php
     	/* Let's first get the ones we can cancel */
     	/** @var Purchase $p */
@@ -58,6 +59,7 @@ if (isset($_GET['cancel'])) {
     <div class="col-sm-1 text-center"><strong>$price</strong>$link</div>
     <div class="col-sm-7">$itemName$link</div>
 </div>
+<hr />
 EOF;
         	    }
         	}
@@ -75,6 +77,7 @@ EOF;
     <div class="col-sm-3">$itemName</div>
     <div class="col-sm-6">Collected on: $collected</div>
 </div>
+<hr />
 EOF;
         	    }
         	}
