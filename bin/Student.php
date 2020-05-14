@@ -1,8 +1,6 @@
 <?php
 
 namespace ArborShop;
-use function \ArborShop\Config;
-use \GraphQL\QueryBuilder\QueryBuilder;
 
 require "classes.php";
 
@@ -14,8 +12,10 @@ class Student {
     protected $query;
     
     /**
+     * Looks up a Student from Arbor, using GraphQL.
      * 
-     * @param mixed $userName_or_arborId
+     * @param mixed $userName_or_arborId Arbor ID or email username is acceptable.
+     * @param bool $nameonly If this optional argument is false, Arbor looks up behaviour points as well.
      */
     public function __construct($userName_or_arborId, $nameOnly = true) {        
         $this->client = new GraphQLClient();
@@ -25,10 +25,9 @@ class Student {
         } else {
             /*   Ugh, got to look up using email address */
             Config::debug("Student::__construct: looking for email");
-            $tmpQueryBuilder = new QueryBuilder('EmailAddress');
-            $tmpQueryBuilder->setArgument("emailAddress", $userName_or_arborId . "@" . Config::$site_emaildomain);
-            $tmpQueryBuilder->selectField((new QueryBuilder('emailAddressOwner'))->selectField("id"));
-            $emailAddress = $this->client->query($tmpQueryBuilder->getQuery())->getData()['EmailAddress'];
+            $emailAddress = $userName_or_arborId . "@" . Config::$site_emaildomain;
+            $emailQuery = "{ EmailAddress (emailAddress: \"$emailAddress\") { emailAddressOwner { id }}}";
+            $emailAddress = $this->client->rawQuery($emailQuery)->getData()['EmailAddress'];
             Config::debug("Student::__construct: query complete");
             if (!isset($emailAddress[0])) {
                 die("Your email address " . $userName_or_arborId . '@' . Config::$site_emaildomain ." appears unrecognised.");
