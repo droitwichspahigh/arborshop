@@ -1,6 +1,3 @@
-[submodule "contrib/adminer"]
-	path = contrib/adminer
-	url = https://github.com/arbor-education/adminer
 [submodule "contrib/php-graphql-client"]
 	path = contrib/php-graphql-client
 	url = https://github.com/mghoneimy/php-graphql-client
