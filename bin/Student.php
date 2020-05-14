@@ -7,22 +7,9 @@ use \GraphQL\QueryBuilder\QueryBuilder;
 require "classes.php";
 
 class Student {
-    /* Needs migrating
-    protected $points = null;
-    protected $behaviourNetPoints = null;
-    protected $spentPoints = null;
-    protected $year_group;
-    protected $firstName = null;
-    protected $lastName = null;
-    protected $arborPerson = null;
-    protected $arborResourceStudent = null;
-    protected $arborResourceStudentId = null;
-    protected $arborResourceStudentUrl = null;
-    */
     protected $academic_year = [];
     protected $db = null;
     protected $detail = [];
-    /** @var GraphQLClient $client */
     protected $client;
     protected $query;
     
