@@ -18,10 +18,6 @@ if (Config::allowed_maintenance()) {
     if (!Config::is_admin($auth_user)) {
         header("location: " . Config::$site_url . "/denied.php");
     }
-} else {
-    /* Don't let the site go live with adminer around! */
-    if (file_exists("../contrib/adminer") || file_exists("contrib/mate-free-4.2"))
-        die ("You MUST get rid of adminer and mate-free contrib bits first!");
 }
 
 /* So, let's check this user should actually be here! */
