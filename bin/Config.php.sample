@@ -61,6 +61,25 @@ class Config {
     );
     
     /**
+     * If this is set to true, PHP sessions are used to 
+     * cache names and (for pupil shop visits) points values.
+     * 
+     * This means that you can potentially store (on the server)
+     * a map of Arbor IDs to full names, and this means that the
+     * databases can then be mapped to names, whereas without
+     * session data, no names are ever stored, making the data
+     * meaningless without Arbor access.
+     * 
+     * To be honest though, if your session data were compromised,
+     * it's highly likely that the Arbor API password above would
+     * also be compromised, so you've got a serious data leak anyway.
+     * 
+     * If you are nervous about GDPR, you can disable this but for
+     * a huge speed penalty.
+     */
+    static $session_allowed = true;
+    
+    /**
      * Lock everyone out of the website and enable maintenance
      */
     private static $maintenance = TRUE;

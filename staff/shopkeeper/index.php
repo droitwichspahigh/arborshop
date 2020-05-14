@@ -40,13 +40,10 @@ if (isset($_GET['collect'])) {
     	
     	<?php 
     	/** @var \ArborShop\Purchase $p */
-    	foreach ($purchaseDb->getPurchases() as $p) {
+    	foreach ($purchaseDb->getUncollectedPurchases() as $p) {
     	    /* First, we'll show the uncollected purchases */
 	        if ($p->getCollected() == "") {
-	            if (!array_key_exists($p->getArborId(), $studentList)) {
-	                $studentList[$p->getArborId()] = new Student($p->getArborId());
-	            }
-	            $name = $studentList[$p->getArborId()]->getFirstName() . ' ' . $studentList[$p->getArborId()]->getLastName();
+	            $name = $purchaseDb->userNameMap($p->getArborId());
 	            $itemName = $shop->getItemById($p->getItemId())->getName();
 	            $link = '<a href="?collect=' . $p->getPurchaseId() . '" class="stretched-link"></a>';
 	            $datetime = $p->getDatetime();
@@ -63,24 +60,21 @@ EOF;
 	        }
     	}
     	
-    	echo "<h5>These purchases have been marked as collected today, so don't give them again!  Click any if that was a mistake:</h5>";
-    	echo "<hr />";
-    	
-    	foreach ($purchaseDb->getPurchases() as $p) {
-    	    /* Now we'll show the collected purchases */
-    	    if ($p->getCollected() != "") {
-    	        if (strcmp(substr($p->getCollected(), 0, 10), date("Y-m-d")) != 0) {
-    	            continue;
-    	        }
-    	        if (!array_key_exists($p->getArborId(), $studentList)) {
-    	            $studentList[$p->getArborId()] = new Student($p->getArborId());
-    	        }
-    	        $name = $studentList[$p->getArborId()]->getFirstName() . ' ' . $studentList[$p->getArborId()]->getLastName();
-    	        $itemName = $shop->getItemById($p->getItemId())->getName();
-    	        $link = '<a href="?uncollect=' . $p->getPurchaseId() . '" class="stretched-link"></a>';
-    	        $datetime = $p->getDatetime();
-    	        $price = $p->getPrice();
-    	        echo <<< EOF
+    	if (sizeof($todayCollectedPurchases = $purchaseDb->getTodayCollectedPurchases()) > 0) {
+        	echo "<h5>These purchases have been marked as collected today, so don't give them again!  Click any if that was a mistake:</h5>";
+        	echo "<hr />";
+        	foreach ($todayCollectedPurchases as $p) {
+        	    /* Now we'll show the collected purchases */
+        	    if ($p->getCollected() != "") {
+        	        if (strcmp(substr($p->getCollected(), 0, 10), date("Y-m-d")) != 0) {
+        	            continue;
+        	        }
+        	        $name = $purchaseDb->userNameMap($p->getArborId());
+        	        $itemName = $shop->getItemById($p->getItemId())->getName();
+        	        $link = '<a href="?uncollect=' . $p->getPurchaseId() . '" class="stretched-link"></a>';
+        	        $datetime = $p->getDatetime();
+        	        $price = $p->getPrice();
+        	        echo <<< EOF
 <div class="row bg-secondary">
     <div class="col-sm-3 text-left">$name$link</div>
     <div class="col-sm-3">$itemName$link</div>
@@ -89,6 +83,7 @@ EOF;
 </div>
 <hr />
 EOF;
+        	    }
     	    }
     	}
     	

@@ -18,11 +18,24 @@ class Student {
      * @param bool $nameonly If this optional argument is false, Arbor looks up behaviour points as well.
      */
     public function __construct($userName_or_arborId, $nameOnly = true) {        
+        if (isset($_SESSION['studentDetail'])) {
+            Config::debug("Student::__construct: session detail found");
+            if ($_SESSION['studentDetail']['arborId'] == $userName_or_arborId ||
+                (isset($_SESSION['studentDetail']['userName']) && $_SESSION['studentDetail']['userName'] == $userName_or_arborId)) {
+                    $this->detail = $_SESSION['studentDetail'];
+                    return;
+                }
+            Config::debug("Student::__construct: session detail found, but not matched");
+        }
+        
+        Config::debug("Student::__construct: no session detail found");
+        
         $this->client = new GraphQLClient();
 
         if (is_numeric($userName_or_arborId)) {
             $this->detail['arborId'] = $userName_or_arborId;
         } else {
+            $this->detail['userName'] = $userName_or_arborId;
             /*   Ugh, got to look up using email address */
             Config::debug("Student::__construct: looking for email");
             $emailAddress = $userName_or_arborId . "@" . Config::$site_emaildomain;
@@ -90,6 +103,9 @@ EOF;
             $this->db->dosql("INSERT INTO pointsCache (arbor_id, arborPoints) VALUES ('"
                 . $this->getId() . "', '"
                 . $this->getBehaviourNetPoints() . "');");
+        }
+        if (isset ($_SESSION)) {
+            $_SESSION['studentDetail'] = $this->detail;
         }
     }
     

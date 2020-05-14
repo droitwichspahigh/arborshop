@@ -1,10 +1,12 @@
 <?php
 namespace ArborShop;
 
+use GraphQL\QueryBuilder\QueryBuilder;
+
 /* Meh, this has code duplication with StudentReceiptWallet... */
 class PurchaseDb
 {
-    private $db = null, $purchases = null;
+    protected $db = null, $userNameMap = null;
 
     public function __construct($db = null)
     {
@@ -18,22 +20,26 @@ class PurchaseDb
      * 
      * @return array(\ArborShop\Purchase)
      */
-    function getPurchases() {
-        if (!is_null($this->purchases)) {
-            return $this->purchases;
-        }
+    protected function getPurchases($filter = "") {
+        $result = $this->db->dosql("SELECT * FROM purchases $filter ORDER BY datetime DESC;");
         
-        $result = $this->db->dosql('SELECT * FROM purchases ORDER BY datetime DESC;');
-        
-        $this->purchases = [];
+        $purchases = [];
         
         if ($result->num_rows > 0) {
             foreach ($result->fetch_all() as $p) {
                 $purchase = new Purchase($p);
-                array_push($this->purchases, $purchase);
+                array_push($purchases, $purchase);
             }
         }
-        return $this->getPurchases();
+        return $purchases;
+    }
+    
+    function getUncollectedPurchases() {
+        return $this->getPurchases("WHERE collected IS NULL");
+    }
+    
+    function getTodayCollectedPurchases() {
+        return $this->getPurchases("WHERE collected >= CURDATE()");
     }
     
     /**
@@ -125,6 +131,49 @@ class PurchaseDb
         }        
     }
     
+    function userNameMap($id) {
+        if (!is_null($this->userNameMap[$id])) {
+            Config::debug("PurchaseDb::userNameMap: property cache hit for $id");
+            return $this->userNameMap[$id];
+        }
+        Config::debug("PurchaseDb::userNameMap: property cache miss");
+        if (isset($_SESSION['userNameMap'])) {
+            Config::debug("PurchaseDb::userNameMap: session cache present");
+            $this->userNameMap = $_SESSION['userNameMap'];
+            if (isset($this->userNameMap[$id])) {
+                Config::debug("PurchaseDb::userNameMap: session cache hit for $id");
+                return $this->userNameMap[$id];
+            } /* Fall through, because this didn't match.
+               *
+               * This could happen if a pupil makes their very first purchase
+               * as the Shopkeeper has their session open.
+               * 
+               * Never mind, let's query Arbor again...
+               */
+        }
+        Config::debug("PurchaseDb::userNameMap: session cache nonexistent");
+        $client = new GraphQLClient();
+        $result = $this->db->dosql("SELECT DISTINCT arbor_id FROM purchases");
+        $arg = [];
+        foreach ($result->fetch_all() as $r) {
+            array_push($arg, $r[0]);
+        }
+        Config::debug("PurchaseDb::userNameMap: doing GraphQL query on names for " . print_r($r, true));
+        $qB = new QueryBuilder('Student');
+        $qB->selectField('preferredFirstName');
+        $qB->selectField('preferredLastName');
+        $qB->setArgument('id_in', $arg);
+        $result = $client->query($qB->getQuery());
+        foreach ($result->getResults()['data']['Student'] as $r) {
+            $this->userNameMap[$r['id']] = $r['preferredFirstName'] . " " . $r['preferredLastName'];
+        }
+        
+        $_SESSION['userNameMap'] = $this->userNameMap;
+        
+        print_r($this->userNameMap);
+        
+        return $this->userNameMap[$id];
+    }
     
     function __destruct()
     {}
