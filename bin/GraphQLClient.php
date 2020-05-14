@@ -4,8 +4,6 @@ namespace ArborShop;
 
 require "classes.php";
 
-require Config::$site_docroot . "/contrib/php-graphql-client/vendor/autoload.php";
-
 use \GraphQL\Client;
 use \GraphQL\Query;
 
@@ -18,10 +16,6 @@ class GraphQLClient {
             ['Authorization' => 'Basic ' . base64_encode(Config::$arbor['user'] . ':' . Config::$arbor['password'])]);
     }
     
-    function builder() {
-        return $this->queryBuilder();
-    }
-        
     function query(Query $query) {
         return $this->client->runQuery($query, true, [['a' => 0]]);
     }
