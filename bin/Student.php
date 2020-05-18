@@ -2,8 +2,6 @@
 
 namespace ArborShop;
 
-require "classes.php";
-
 class Student {
     protected $academic_year = [];
     protected $db = null;
