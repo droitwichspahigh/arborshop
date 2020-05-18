@@ -170,8 +170,6 @@ class PurchaseDb
         
         $_SESSION['userNameMap'] = $this->userNameMap;
         
-        print_r($this->userNameMap);
-        
         return $this->userNameMap[$id];
     }
     
