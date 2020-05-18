@@ -26,6 +26,8 @@ $db->dosql("CREATE TABLE spent (
         CONSTRAINT spent_pk PRIMARY KEY (spent_id)
     );");
 
+$db->dosql("DROP TABLE pointscache", FALSE);
+
 $db->dosql("CREATE TABLE pointscache (
         pointscache_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
         arbor_id INT NOT NULL,
