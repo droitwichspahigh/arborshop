@@ -12,7 +12,6 @@ require "../../bin/classes.php";
 $db = new Database();
 $purchaseDb = new PurchaseDb($db);
 $shop = new Shop($db);
-$studentList = [];
 
 if (isset($_GET['collect'])) {
     $purchaseDb->collect($_GET['collect']);
