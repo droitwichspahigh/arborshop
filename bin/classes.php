@@ -24,7 +24,7 @@ if (!class_exists("ArborShop\Config")) {
         
         $time = $_SERVER['REQUEST_TIME'];
         
-        if (isset($_SESSION['SESSION_CREATIONTIME']) &&
+        if (!isset($_SESSION['SESSION_CREATIONTIME']) ||
                 ($time - $_SESSION['SESSION_CREATIONTIME']) > $timeout_duration) {
             session_unset();
             session_destroy();
