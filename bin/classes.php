@@ -20,6 +20,8 @@ if (!class_exists("ArborShop\Config")) {
          */
         $timeout_duration = 600;
         
+        session_name("ArborShop");
+        
         session_start(['gc_maxlifetime' => $timeout_duration, 'cookie_lifetime' => $timeout_duration]);
         
         $time = $_SERVER['REQUEST_TIME'];
