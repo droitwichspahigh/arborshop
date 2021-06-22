@@ -90,8 +90,11 @@ EOF;
         foreach (['preferredFirstName', 'preferredLastName'] as $n) {
             $this->detail[$n] = $result['Student'][0][$n];
         }
-        $this->detail['yearGroup'] = 
-            str_ireplace("Year ", "", $result['Student'][0]['academicLevel']['shortName']);
+        $matches = [];
+        if (preg_match('/[1-9][0-9]*|[0RKN]$/', $result['Student'][0]['academicLevel']['shortName'], $matches) == 0) {
+            die("Student {$this->getFirstName()} {$this->getLastName()}'s year group {$result['Student'][0]['academicLevel']['shortName']} is invalid.");
+        }
+        $this->detail['yearGroup'] = $matches[0];
         if ($queryArborForBehaviourPoints) {
             $p = 0;
             foreach ($result['BehaviouralIncidentStudentInvolvement'] as $i) {
