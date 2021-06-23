@@ -49,7 +49,8 @@ if (isset($_GET['cancel'])) {
     	if ($purchases = $purchaseDb->getStudentPurchases($student)) {
         	foreach ($purchases as $p) {
         	    if ($p->getCollected() == "") {
-        	        $itemName = $shop->getItemById($p->getItemId())->getName();    
+        	        $item = $shop->getItemById($p->getItemId());
+        	        $itemName = $item ? $item->getName() : "Unknown item";
         	        $link = '<a href="?cancel=' . $p->getPurchaseId() . $m . '" class="stretched-link"></a>';
         	        $datetime = $p->getDatetime();
         	        $price = $p->getPrice();
@@ -66,7 +67,8 @@ EOF;
         	/* Now the ones we can't cancel */
         	foreach ($purchases as $p) {
         	    if ($p->getCollected() != "") {
-        	        $itemName = $shop->getItemById($p->getItemId())->getName();
+        	        $item = $shop->getItemById($p->getItemId());
+        	        $itemName = $item ? $item->getName() : "Unknown item";
         	        $datetime = $p->getDatetime();
         	        $price = $p->getPrice();
         	        $collected = $p->getCollected();

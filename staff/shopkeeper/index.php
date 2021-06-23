@@ -43,7 +43,8 @@ if (isset($_GET['collect'])) {
     	    /* First, we'll show the uncollected purchases */
 	        if ($p->getCollected() == "") {
 	            $name = $purchaseDb->userNameMap($p->getArborId());
-	            $itemName = $shop->getItemById($p->getItemId())->getName();
+	            $item = $shop->getItemById($p->getItemId());
+	            $itemName = $item ? $item->getName() : 'Unknown item';
 	            $link = '<a href="?collect=' . $p->getPurchaseId() . '" class="stretched-link"></a>';
 	            $datetime = $p->getDatetime();
 	            $price = $p->getPrice();
@@ -69,7 +70,8 @@ EOF;
         	            continue;
         	        }
         	        $name = $purchaseDb->userNameMap($p->getArborId());
-        	        $itemName = $shop->getItemById($p->getItemId())->getName();
+        	        $item = $shop->getItemById($p->getItemId());
+        	        $itemName = $item ? $item->getName() : 'Unknown item';
         	        $link = '<a href="?uncollect=' . $p->getPurchaseId() . '" class="stretched-link"></a>';
         	        $datetime = $p->getDatetime();
         	        $price = $p->getPrice();
