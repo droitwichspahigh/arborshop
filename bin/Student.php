@@ -80,6 +80,9 @@ BehaviouralIncidentStudentInvolvement (student__id: $id behaviouralIncident__inc
     }
   }
 }
+PointAward (student__id: $id awardedDatetime_before: "$ayPost" awardedDatetime_after: "$ayEve") {
+  points
+}
 EOF;
             }
         }
@@ -99,6 +102,9 @@ EOF;
             $p = 0;
             foreach ($result['BehaviouralIncidentStudentInvolvement'] as $i) {
                 $p += $i['severity'];
+            }
+            foreach ($result['PointAward'] as $i) {
+                $p += $i['points'];
             }
             $this->detail['behaviourNetPoints'] = $p;
             $this->db->dosql("INSERT INTO pointsCache (arbor_id, arborPoints) VALUES ('"
