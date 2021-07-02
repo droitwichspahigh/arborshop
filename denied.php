@@ -15,7 +15,7 @@ require('bin/classes.php');
 		<div class="card-body">
 			<a href="./"><img class="mb-4" src="img/times-circle.svg" alt="" width="72" height="72"></a>
 			<p class="text-footer text-muted">				
-				<?php if (Config::allowed_maintenance()) { ?>
+				<?php if (!Config::allowed_maintenance()) { ?>
 					Access Denied: You are not authorised to use this resource.
 					Please contact <a href="mailto:<?= Config::$support_email ?>?subject=<?= Config::$site_name; ?>: Access Request">
 						<?= Config::$powered_by ?></a> if this is an error.
