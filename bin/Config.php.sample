@@ -22,6 +22,10 @@ class Config {
         'password' => '',
     );
     
+    // Leave empty to get behaviour points from Arbor-- most sites would want this
+    static $queryMyDshs = "";
+    static $queryMyDshsApiKey = '';
+    
     static $db = array(
         'host' => "localhost:3306",
         'user' => "root",

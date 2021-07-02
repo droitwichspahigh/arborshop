@@ -64,26 +64,28 @@ Student (id: $id) {
   }
 }
 EOF;
-        $queryArborForBehaviourPoints = false;
+        $queryForBehaviourPoints = false;
         if (!$nameOnly) {
             /* Before we query Arbor, let's see if we have them cached */
             if ($this->getBehaviourNetPointsFromCache() == false) {
-                $queryArborForBehaviourPoints = true;
-                $ayEve = $this->getAY('eve');
-                $ayPost = $this->getAY('post');
-                $this->query .= <<<EOF
-BehaviouralIncidentStudentInvolvement (student__id: $id behaviouralIncident__incidentDatetime_before: "$ayPost" behaviouralIncident__incidentDatetime_after: "$ayEve") {
-  severity
-  student {
-    academicLevel {
-      shortName
+                $queryForBehaviourPoints = true;
+                if (empty(Config::$queryMyDshs)) {
+                    $ayEve = $this->getAY('eve');
+                    $ayPost = $this->getAY('post');
+                    $this->query .= <<<EOF
+    BehaviouralIncidentStudentInvolvement (student__id: $id behaviouralIncident__incidentDatetime_before: "$ayPost" behaviouralIncident__incidentDatetime_after: "$ayEve") {
+      severity
+      student {
+        academicLevel {
+          shortName
+        }
+      }
     }
-  }
-}
-PointAward (student__id: $id awardedDatetime_before: "$ayPost" awardedDatetime_after: "$ayEve") {
-  points
-}
-EOF;
+    PointAward (student__id: $id awardedDatetime_before: "$ayPost" awardedDatetime_after: "$ayEve") {
+      points
+    }
+    EOF;
+                }
             }
         }
         
@@ -98,13 +100,31 @@ EOF;
             die("Student {$this->getFirstName()} {$this->getLastName()}'s year group {$result['Student'][0]['academicLevel']['shortName']} is invalid.");
         }
         $this->detail['yearGroup'] = $matches[0];
-        if ($queryArborForBehaviourPoints) {
-            $p = 0;
-            foreach ($result['BehaviouralIncidentStudentInvolvement'] as $i) {
-                $p += $i['severity'];
-            }
-            foreach ($result['PointAward'] as $i) {
-                $p += $i['points'];
+        if ($queryForBehaviourPoints) {
+            if (empty(Config::$queryMyDshs)) {
+                $p = 0;
+                foreach ($result['BehaviouralIncidentStudentInvolvement'] as $i) {
+                    $p += $i['severity'];
+                }
+                foreach ($result['PointAward'] as $i) {
+                    $p += $i['points'];
+                }
+            } else {
+                $client = new \GuzzleHttp\Client(['base_uri' => Config::$queryMyDshs, 'timeout' => 1.0,]);
+                $key = Config::$queryMyDshsApiKey;
+                try {
+                    $response = $client->get("{$this->getId()}/praise-points/total",
+                        ['headers' => [ 'Authorization' => "Bearer $key",],]
+                    );
+                    
+                } catch (\Exception $e) {
+                    die("There has been a problem communicating with MyDSHS.");
+                }
+                $p = (string)$response->getBody();
+                if (!is_numeric($p)) {
+                    echo "<pre>" . $response->getBody() . "</pre>";
+                    die("There has been a problem communicating with MyDSHS.");
+                }
             }
             $this->detail['behaviourNetPoints'] = $p;
             $this->db->dosql("INSERT INTO pointsCache (arbor_id, arborPoints) VALUES ('"
